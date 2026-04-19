@@ -1,0 +1,2 @@
+Market,Best_VaR_Model,N_Observations,VaR_Confidence,Expected_Violations,Actual_Violations,Deviation,Interpretation,kupiec_pvalue,christoffersen_pvalue,dq_pvalue,model_pass
+CSI_300,VaR_student_t,278,95%,13,8,-5,Conservative VaR (overestimates risk),0.0786935873120278,0.49028233318029435,0.9994629761397571,PASS

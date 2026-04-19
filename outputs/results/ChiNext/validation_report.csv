@@ -1,0 +1,4 @@
+Model,Kupiec_p,Christoffersen_p,DQ_p,Final_Status,Interpretation
+VaR_normal,0.0030648509952307,0.8000767496864517,0.8027796789305064,FAIL,Underestimation of extreme tail risk (Critical)
+VaR_student_t,0.3011632993436024,0.6064293079421716,0.6250797256955953,PASS,Acceptable Risk Coverage
+VaR_empirical,0.7489559600779907,0.2787185466483497,0.2499205296788124,PASS,Acceptable Risk Coverage

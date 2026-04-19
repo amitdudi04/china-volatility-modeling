@@ -1,0 +1,4 @@
+Model,Kupiec_p,Christoffersen_p,DQ_p,Final_Status,Interpretation
+VaR_normal,0.9780707359729792,0.2220305188776707,0.8544278332769095,PASS,Acceptable Risk Coverage
+VaR_student_t,0.0786935873120278,0.4902823331802943,0.9994629761397572,PASS,Acceptable Risk Coverage
+VaR_empirical,0.9780707359729792,0.7287400634012988,0.7159368901531384,PASS,Acceptable Risk Coverage

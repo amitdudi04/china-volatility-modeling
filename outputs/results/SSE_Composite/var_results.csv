@@ -1,0 +1,2 @@
+Market,Best_VaR_Model,N_Observations,VaR_Confidence,Expected_Violations,Actual_Violations,Deviation,Interpretation,kupiec_pvalue,christoffersen_pvalue,dq_pvalue,model_pass
+SSE_Composite,VaR_student_t,1427,95%,71,73,2,VaR statistically acceptable,0.8417246491698989,0.10812600281381801,0.08144332525386115,PASS

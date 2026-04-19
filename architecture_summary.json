@@ -1,0 +1,177 @@
+{
+  "benchmark_evaluation.py": {
+    "docstring": "src/benchmark_evaluation.py\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nBenchmark Comparison Layer \u2014 Quant Research Evaluation Extension\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nPurpose:\n    Compare the predictive accuracy of all model outputs (GARCH, ML, Hybrid)\n    against a naive rolling-standard-deviation baseline.\n\n    A model earns its keep only if it beats the baseline on RMSE *and*\n    correlation.  This module makes that comparison explicit and returns a\n    single structured DataFrame row that can be consumed by any downstream\n    reporting layer.\n\nBaselines and Models Evaluated\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n    GARCH     \u2014 from column  GARCH_Vol  (or Forecast_Vol if absent)\n    ML        \u2014 from column  ML_Vol     (or falls back gracefully)\n    Hybrid    \u2014 from column  Forecast_Vol  (the combined output)\n    Rolling   \u2014 20-day rolling std of past returns \u00d7 \u221a252  (computed here;\n                no look-ahead because we use shift(1) before the comparison)\n\nMetrics\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n    RMSE        \u2014 root mean square error vs Realized_Vol\n    Correlation \u2014 Pearson correlation vs Realized_Vol (higher = better signal)\n\nInput Contract\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n    hybrid_master_df must contain at minimum:\n        \u2022 Realized_Vol   (annualised decimal vol proxy)\n        \u2022 Forecast_Vol   (hybrid output)\n    Optional columns used when present:\n        \u2022 GARCH_Vol\n        \u2022 ML_Vol\n        \u2022 Log_Return     (required only if Rolling baseline is desired;\n                          falls back to NaN if absent)\n\nUsage:\n    from src.benchmark_evaluation import BenchmarkEvaluation\n    bench = BenchmarkEvaluation()\n    result_df = bench.evaluate(hybrid_master_df)",
+    "classes": [
+      "BenchmarkEvaluation"
+    ],
+    "functions": []
+  },
+  "data_loader.py": {
+    "docstring": null,
+    "classes": [
+      "DataLoader"
+    ],
+    "functions": []
+  },
+  "data_validation.py": {
+    "docstring": null,
+    "classes": [],
+    "functions": [
+      "validate_data"
+    ]
+  },
+  "economic_analysis.py": {
+    "docstring": "src/economic_analysis.py\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nAdvanced Economic Evaluation Layer \u2014 Quant Research Evaluation Extension\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nPurpose:\n    Evaluate the real financial usefulness of a volatility forecast by\n    simulating a volatility-targeting portfolio strategy and computing\n    institution-grade performance metrics.\n\nStrategy Logic\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n    At each time step T, the portfolio's position size is set to:\n\n        Position_T = clip(target_vol / Forecast_Vol_T, 0, max_leverage)\n\n    The clipping to [0, max_leverage] ensures the strategy never goes short\n    or exceeds a configurable leverage cap.\n\n    The position is applied with a one-period lag (shift(1)) to prevent\n    look-ahead bias.  Portfolio return at T is:\n\n        R_T = Position_{T-1} \u00d7 Actual_Return_T\n\nMetrics\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n    Sharpe Ratio   \u2014 annualised: (\u03bc_r \u00d7 252) / (\u03c3_r \u00d7 \u221a252)\n    Max Drawdown   \u2014 maximum peak-to-trough decline on compound equity curve\n    Equity Curve   \u2014 cumulative product of (1 + R_t)\n\nInput Contract\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n    df must contain:\n        \u2022 Forecast_Vol   \u2014 annualised, decimal (e.g. 0.18 for 18%)\n        \u2022 Actual_Return  \u2014 log or simple daily return, decimal\n    NaNs are handled safely throughout.\n\nUsage:\n    from src.economic_analysis import EconomicAnalysis\n    analyser = EconomicAnalysis(target_vol=0.20, max_leverage=2.0)\n    result_df, metrics = analyser.evaluate(df)",
+    "classes": [
+      "EconomicAnalysis"
+    ],
+    "functions": []
+  },
+  "economic_evaluation.py": {
+    "docstring": null,
+    "classes": [
+      "EconomicEvaluation"
+    ],
+    "functions": []
+  },
+  "eda_econometrics.py": {
+    "docstring": null,
+    "classes": [
+      "EDAEconometrics"
+    ],
+    "functions": []
+  },
+  "evaluator.py": {
+    "docstring": null,
+    "classes": [
+      "ModelEvaluator"
+    ],
+    "functions": []
+  },
+  "forecast_engine.py": {
+    "docstring": null,
+    "classes": [
+      "ForecastEngine"
+    ],
+    "functions": []
+  },
+  "garch_models.py": {
+    "docstring": null,
+    "classes": [
+      "GARCHModels"
+    ],
+    "functions": []
+  },
+  "gui.py": {
+    "docstring": null,
+    "classes": [
+      "MplCanvas",
+      "QuantResearchDashboard"
+    ],
+    "functions": [
+      "main"
+    ]
+  },
+  "interpretation.py": {
+    "docstring": null,
+    "classes": [
+      "InterpretationLayer"
+    ],
+    "functions": []
+  },
+  "logger.py": {
+    "docstring": null,
+    "classes": [],
+    "functions": []
+  },
+  "ml_models.py": {
+    "docstring": null,
+    "classes": [
+      "MLModels"
+    ],
+    "functions": []
+  },
+  "model_comparison.py": {
+    "docstring": null,
+    "classes": [
+      "ModelComparison"
+    ],
+    "functions": []
+  },
+  "pipeline.py": {
+    "docstring": null,
+    "classes": [
+      "Pipeline"
+    ],
+    "functions": [
+      "validate_df"
+    ]
+  },
+  "preprocessor.py": {
+    "docstring": null,
+    "classes": [
+      "Preprocessor"
+    ],
+    "functions": []
+  },
+  "regime_model.py": {
+    "docstring": null,
+    "classes": [
+      "RegimeModel"
+    ],
+    "functions": []
+  },
+  "regime_performance.py": {
+    "docstring": null,
+    "classes": [
+      "RegimePerformance"
+    ],
+    "functions": []
+  },
+  "risk_metrics.py": {
+    "docstring": null,
+    "classes": [
+      "RiskMetrics"
+    ],
+    "functions": []
+  },
+  "statistical_tests.py": {
+    "docstring": "src/statistical_tests.py\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nStatistical Testing Layer \u2014 Quant Research Evaluation Extension\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nPurpose:\n    Evaluate the statistical validity of model residuals produced by any\n    volatility forecasting model.  Two core tests are implemented:\n\n    1. Ljung-Box Q-test  \u2014 detects residual autocorrelation.  A PASS means\n       the standardised residuals behave like white noise (no serial structure\n       left unexplained by the model).\n\n    2. ARCH-LM test      \u2014 detects remaining conditional heteroskedasticity.\n       A PASS means the squared residuals show no ARCH effects (the model has\n       captured the volatility clustering).\n\nOperates independently.  Consumes model residuals as a plain pandas Series\nor numpy array.  Returns a structured result dictionary compatible with the\nrest of the pipeline's output schema.\n\nUsage:\n    from src.statistical_tests import StatisticalTests\n    tester = StatisticalTests()\n    results = tester.run(residuals)",
+    "classes": [
+      "StatisticalTests"
+    ],
+    "functions": []
+  },
+  "validation.py": {
+    "docstring": null,
+    "classes": [
+      "ValidationEngine"
+    ],
+    "functions": []
+  },
+  "__init__.py": {
+    "docstring": null,
+    "classes": [],
+    "functions": []
+  },
+  "utils\\paths.py": {
+    "docstring": null,
+    "classes": [],
+    "functions": [
+      "get_market_path"
+    ]
+  },
+  "utils\\validation.py": {
+    "docstring": null,
+    "classes": [],
+    "functions": [
+      "load_time_series_csv",
+      "validate_and_save"
+    ]
+  },
+  "utils\\__init__.py": {
+    "docstring": null,
+    "classes": [],
+    "functions": []
+  }
+}

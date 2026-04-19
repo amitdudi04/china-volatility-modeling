@@ -1,0 +1,41 @@
+--- ADVERSARIAL TEST: CSI_300 ---
+Vol Max (Forecast): 28.72%
+Vol Min (Forecast): 12.62%
+Vol Max (Realized): 115.98%
+!! REALIZED VOL SPIKE > 60% DETECTED !!
+Strategy Avg Daily Turnover: 1.65%
+Strategy Max Daily Turnover: 14.90%
+
+Sharpe Ranges:
+  Static Exposure: 1.50
+  Volatility-Managed: 1.49
+  Regime-Based: 1.50
+
+Max DD Ranges:
+  Static Exposure: -11.08
+  Volatility-Managed: -15.46
+  Regime-Based: -11.08
+
+
+--- ADVERSARIAL TEST: SSE_Composite ---
+Vol Max (Forecast): 50.94%
+Vol Min (Forecast): 5.68%
+Vol Max (Realized): 140.86%
+!! REALIZED VOL SPIKE > 60% DETECTED !!
+Strategy Avg Daily Turnover: 1.07%
+Strategy Max Daily Turnover: 20.00%
+
+Sharpe Ranges:
+  Static Exposure: 0.23
+  Volatility-Managed: 0.30
+  Regime-Based: 0.23
+
+Max DD Ranges:
+  Static Exposure: -74.02
+  Volatility-Managed: -57.55
+  Regime-Based: -74.02
+
+
+--- ADVERSARIAL TEST: ChiNext ---
+
+

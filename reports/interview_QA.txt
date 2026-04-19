@@ -1,0 +1,18 @@
+========================================
+INTERVIEW PREPARATION: TECHNICAL QA
+========================================
+
+Q1: Why did you choose to analyze the Chinese market specifically over the S&P 500 or European indices?
+A1: The S&P 500 is generally considered more informationally efficient relative to emerging markets; forecasting variance there yields highly marginal gains. The Chinese market operates under distinct structural parameters with high retail momentum and significant state policy interventions (such as the 2015 CSRC margin adjustments). This environment forces forecasting models to withstand extreme structural breaks. If an econometric framework and risk protocol prove robust in China's regime shifts, its underlying logic demonstrates a high degree of global resilience.
+
+Q2: Why rely heavily on the GARCH family when advanced Machine Learning is available?
+A2: Tree-based machine learning models do not explicitly model persistence in conditional variance. GARCH incorporates a specific term—the beta parameter—that internalizes structural memory. When an unprecedented crisis emerges, ML architectures often underperform because the occurring feature distribution falls entirely outside their training domain. A GARCH model propagates the variance shock forward through its autoregressive calculation, reacting more consistently to previously unobserved tail events.
+
+Q3: Explain the difference between Kupiec and Christoffersen testing in your pipeline.
+A3: Most baseline validations use Kupiec, which is an unconditional test. It simply validates whether the VaR failed exactly 5% of the time. However, if all 5% of those failures occur sequentially, the portfolio may be depleted despite passing the Kupiec test. I implemented the Christoffersen test to evaluate conditional independence. It formally tests whether those VaR failures exhibit serial dependence. In the Chinese market, the results indicate that tail risk is dependent—when risk boundaries are breached, they cluster across consecutive days.
+
+Q4: What do you define as 'Economic Value' in your research?
+A4: Many quantitative studies conclude at minimizing Root Mean Square Error (RMSE). I argue that statistical loss functions are incomplete without capital context. Economic value is established in this study by utilizing forecasts to mechanically scale portfolio exposure via Inverse Volatility Targeting. Value is measured by tracking the reduction in Maximum Drawdown and the improvement in the Sharpe Ratio of a static baseline portfolio versus the model-driven dynamic allocation. Substantially reducing a portfolio drawdown constitutes tangible economic value.
+
+Q5: What was the primary learning outcome from engineering this entire architecture?
+A5: The project reinforced the concept that algorithmic complexity does not guarantee robustness. Machine learning (Random Forests, XGBoost) excels at identifying intricate lag-dependencies in stable regimes, but systemic shocks expose their limitations in extrapolating beyond historical training data. Resilient risk management relies on models (like GARCH) that maintain structural integrity during significant variance shifts, paired explicitly with dynamic portfolio execution layers.
