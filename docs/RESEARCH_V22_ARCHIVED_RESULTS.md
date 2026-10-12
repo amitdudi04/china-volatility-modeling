@@ -80,6 +80,18 @@ These values concern **Gaussian** next-session VaR with zero conditional mean an
 
 The Kupiec test is provided per model in `normal_95pct_var_coverage.csv`. A nonrejected Kupiec test is **not proof** of safe or calibrated tails, particularly without independence tests. The Ridge forecasts systematically understate some risk outcomes; the prior claim that Gaussian VaR universally fails on every market is contradicted by this preliminary evaluation.
 
+## Per-origin fitted Student-t VaR and parametric Expected Shortfall (new)
+
+The saved Student-t GARCH study refits **GARCH(1,1) with Student-t conditional innovations at each of the 240 2024 forecast origins per market**, recovers that origin's conditional mean, conditional volatility and fitted degrees of freedom, and verifies its variance against the original saved annualized GARCH forecast. The Student-t conditional quantile is rescaled to **unit innovation variance** using `sqrt((nu - 2)/nu)`; no fixed arbitrary degrees-of-freedom assumption is used. The lower-tail parametric conditional Expected Shortfall is computed analytically. Its performance is **not formally backtested**.
+
+| Market | VaR breaches / 240 | Kupiec p-value | Christoffersen independence p-value | Joint conditional-coverage p-value |
+| --- | ---: | ---: | ---: | ---: |
+| CSI 300 | 7 | 0.1094 | 0.5157 | 0.2248 |
+| SSE Composite | 12 | 1.0000 | 0.2599 | 0.5301 |
+| ChiNext ETF proxy | 8 | 0.2084 | 0.4566 | 0.3436 |
+
+These tests do not reject the hypothesized Student-t VaR coverage behavior at the 5% level; **nonrejection is not proof of calibrated tail risk, and neither a small number of exceedances nor an examined retrospective sample can validate ES**. See `outputs/research_v22/student_t_garch_tail_forecasts.csv`, `student_t_var_backtests.csv`, `student_t_es_descriptive.csv` and `student_t_tail_manifest.json`. All 720 rows and saved input forecast hashes are verified before inclusion.
+
 ## Illustrative long-only volatility targeting: 10 bps per traded unit
 
 At the close of `t`, determine exposure for session `t+1` as `min(1, 0.20 / sqrt(predicted_ann_variance))`. Cap leverage at 100%; idle cash return zero. Charge 10 basis points per unit change in exposure and compound **simple returns** calculated as `exp(log_return)-1`. Max drawdown uses wealth relative to prior maximum, including initial wealth of 1.
@@ -107,4 +119,4 @@ python scripts/assess_archived_v22_risk.py --source-dir staging/research_v22 --o
 
 These scripts **refuse to overwrite existing releases**. On a rerun use new staging directory names, then compare hashes before publishing. The saved final archival release under `outputs/research_v22/` has **3 × 240 per-origin forecast rows**, manifests, full loss tables, bootstrap confidence intervals, Gaussian VaR diagnostics, and exposure-cost sensitivities. ChiNext's complete 240-row forecast was independently reproduced by four 60-row batches with **zero numerical difference**.
 
-**Remaining limitations:** no new post-2024 holdout, no canonical HAR-RV implementation, no Student-t VaR/Expected Shortfall conditional coverage test, no transaction-level or dividend-adjusted investable backtest, and the old GUI/reports have not yet been regenerated from v2.2 outputs. The 2024 period was examined during model correction; interpret all rankings as exploratory retrospective evidence. No admissions score should be inflated solely by adding these files.
+**Remaining limitations:** no new post-2024 holdout, no canonical HAR-RV implementation, no **formal ES backtest** (Student-t VaR and Christoffersen diagnostics are now available), no transaction-level or dividend-adjusted investable backtest, and the old GUI/reports have not yet been regenerated from v2.2 outputs. The 2024 period was examined during model correction; interpret all rankings as exploratory retrospective evidence. No admissions score should be inflated solely by adding these files.
