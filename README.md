@@ -40,7 +40,7 @@ Paired five-session moving-block bootstrap intervals for GARCH's QLIKE differenc
 
 **Economics:** At an illustrative 20% annual volatility target, 100% maximum exposure and 10 bps per unit turnover, GARCH-managed annualized returns were lower than static exposure in all three markets. ChiNext drawdown fell from approximately -25.50% to -17.54%, but annualized return and Sharpe also fell. For CSI and SSE, maximum drawdowns were essentially unchanged in this 2024 sample. **No universal performance or capital-protection benefit is claimed.**
 
-Full model-by-model RMSE/MAE/QLIKE values, block-bootstrap intervals, per-date forecasts, normal VaR coverage, zero/5/10/20 bps sensitivity and exact calculation assumptions are in [the full v2.2 results report](docs/RESEARCH_V22_ARCHIVED_RESULTS.md) and [research v2.2 outputs](outputs/research_v22/).
+Full model-by-model RMSE/MAE/QLIKE values, block-bootstrap intervals, per-date forecasts, Gaussian and per-origin fitted Student-t VaR/parametric ES diagnostics, conditional-coverage testing, zero/5/10/20 bps sensitivity and exact calculation assumptions are in [the full v2.2 results report](docs/RESEARCH_V22_ARCHIVED_RESULTS.md) and [research v2.2 outputs](outputs/research_v22/).
 
 ## Reproduction
 
@@ -52,7 +52,7 @@ python scripts/run_archived_v22.py --market CSI_300 --out-dir staging/research_v
 python scripts/run_archived_v22.py --market SSE_Composite --out-dir staging/research_v22
 python scripts/run_archived_v22.py --market ChiNext --out-dir staging/research_v22
 python scripts/summarize_archived_v22.py --source-dir staging/research_v22 --out-dir staging/v22_summary
-python scripts/assess_archived_v22_risk.py --source-dir staging/research_v22 --out-dir staging/v22_risk
+python scripts/assess_archived_v22_risk.py --source-dir staging/research_v22 --out-dir staging/v22_risk\npython main.py --verify-v22\npython main.py --run-gui  # opens the offline research dashboard
 ```
 
 The experimental scripts refuse to overwrite existing releases. Separate scripts can reassemble an interrupted run from complete timestamp- and SHA-verified chunks. Main entry point `python main.py --run-pipeline` and the optional PyQt GUI still run the **legacy** implementation; their archived reports are not interchangeable with the corrected v2.2 results.
@@ -66,6 +66,6 @@ The experimental scripts refuse to overwrite existing releases. Separate scripts
 - `src/risk_economic_v22.py`: ex-ante Gaussian VaR and simple-return cost-aware exposure analysis.
 - `scripts/run_archived_v22.py`, `scripts/summarize_archived_v22.py`, `scripts/assess_archived_v22_risk.py`: reproducibility workflow.
 - `docs/RESEARCH_V22_ARCHIVED_RESULTS.md`: full findings, evidence and caveats.
-- `outputs/research_v22/`: saved forecasts, hashes, comparisons and risk/economic sensitivity.
+- `outputs/research_v22/`: saved forecasts, hashes, comparisons, fitted Student-t conditional VaR/ES, risk/economic sensitivity and self-contained `dashboard.html`.\n- `main.py --run-gui`: verified browser dashboard; `--run-pipeline` regenerates v2.2 into a new staging directory; superseded legacy pipeline requires explicit `--run-legacy-pipeline --allow-legacy-overwrite`.
 
-**Not yet established:** an independent post-2024 holdout, standardized Student-t VaR and Expected Shortfall backtesting, canonical HAR-RV or a fully reconciled v2.2 GUI, and a realistic tradable index/ETF total-return simulation. These limitations are part of the research record. Negative results remain valid findings.
+**Not yet established:** an independent post-2024 holdout, **formal Expected Shortfall backtesting**, canonical HAR-RV, full risk-model calibration across multiple windows, or a realistic tradable index/ETF total-return simulation. Fitted Student-t VaR and Christoffersen diagnostics now exist; parametric ES is calculated but not formally backtested. The verified offline HTML dashboard is the default; the optional Qt interface remains environment-dependent. These limitations are part of the research record. Negative results remain valid findings.
