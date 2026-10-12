@@ -1,72 +1,122 @@
-# Volatility Forecasting and Risk Dynamics in Chinese Equity Markets
+# Volatility Forecasting and Risk Analysis in Chinese Equity Markets
 
-**Research v2.2 — retrospective reanalysis of the original archived 2015–2024 dataset**
+This project compares statistical and machine-learning methods for forecasting equity-market volatility in China. It uses historical prices from the CSI 300, SSE Composite, and a ChiNext ETF to evaluate forecast accuracy, estimate downside risk, and test a simple volatility-based position-sizing strategy.
 
-This repository studies whether econometric and machine-learning forecasts of **next-session conditional variance** improve out-of-sample risk forecasting and a simple volatility-targeted equity-exposure rule. This is an academic research exercise, **not** a claim of institutional-grade capital protection.
+The main models are GARCH(1,1), Random Forest, log-variance Ridge regression, and a fixed Ridge–Random Forest combination. A 21-session historical-variance estimate serves as the baseline.
 
-> **Research integrity:** The earlier README's descriptions of an "adaptive hybrid copula," RMSE-weighted parameters, universal Gaussian VaR failure, and universally beneficial volatility management were **not supported by the legacy implementation or its results**. These claims have been withdrawn in this reanalysis. The original legacy result files are preserved for comparison, but the corrected 2024 experiment and its limitations are documented in [Research v2.2 — full archived results](docs/RESEARCH_V22_ARCHIVED_RESULTS.md).
+## 1. Project overview
 
-## Markets and archived data
+The project follows five steps:
 
-| Market | Instrument actually studied | Raw historical coverage |
-| --- | --- | --- |
-| CSI 300 | `000300.SS` **price index** | 2021-03-11 to 2024-12-30 (925 observations) |
-| SSE Composite | `000001.SS` **price index** | 2015-01-05 to 2024-12-30 (2,428 observations) |
-| ChiNext | `159915.SZ` **ETF proxy** — **not** the ChiNext price index | 2015-01-05 to 2024-12-30 (2,428 observations) |
+1. **Prepare the data:** Calculate daily log returns, lagged features, and rolling volatility measures from historical closing prices.
+2. **Forecast next-session variance:** Fit the models using only information available at each forecast date.
+3. **Compare predictions:** Evaluate all forecasts against the same next-session squared-return target using RMSE, MAE, and QLIKE.
+4. **Measure downside risk:** Estimate 95% Value at Risk (VaR), calculate parametric Expected Shortfall (ES), and check VaR exceedances.
+5. **Test a volatility-based strategy:** Compare a fixed equity exposure with a volatility-targeted exposure after trading costs.
 
-These are exactly the archived CSVs in `data/raw/`; no missing CSI history is fabricated, imputed, or assumed. The project originally predates the requested September 2026 extension, which is **not part of the completed study**. The ETF raw close must not be treated as a verified dividend-adjusted total-return series.
+## 2. Dataset
 
-## Corrected forecasting design
+The project uses the original historical price files. The three instruments have different starting dates:
 
-At the close of session `t`, forecast annualized next-session conditional variance. Each model's score uses the same observed annualized next-session squared log return: `252 * log(Close[t+1]/Close[t])**2`. The one-day squared return is a **noisy** volatility proxy. Training labels are available only when their target end date is on or before the forecast origin.
+| Market | Instrument used | Date range | Observations |
+| --- | --- | --- | ---: |
+| CSI 300 | `000300.SS` index | Mar 2021–Dec 2024 | 925 |
+| SSE Composite | `000001.SS` index | Jan 2015–Dec 2024 | 2,428 |
+| ChiNext | `159915.SZ` ETF proxy | Jan 2015–Dec 2024 | 2,428 |
 
-Each market has **240 retrospectively evaluated 2024 origins** from January 2 to December 27. GARCH and the other models use expanding training with only information available at each forecast origin. The 2024 history has already been examined during research development and is **not an untouched or blind holdout**.
+The ChiNext series is an **ETF, not the ChiNext price index**. Its closing prices are not confirmed as dividend-adjusted total returns.
 
-Five forecasts are compared: a 21-session trailing variance baseline, genuine one-step Student-t GARCH(1,1), Random Forest, HAR-**inspired** log-variance Ridge (**not canonical HAR-RV**), and a fixed 50/50 Ridge–RF blend (**not an adaptive copula**). The Ridge forecast has a disclosed causal magnitude guardrail that was introduced after observing a large retrospective outlier.
+Models were evaluated at **240 dates in 2024 for each market** (720 market-date observations overall). Each forecast uses information available through that day's close and is compared with the return from the following trading session.
 
-## Key empirical findings
+The evaluation is historical and walk-forward. Because the 2024 results were examined during model development, this period should **not be described as an untouched holdout**.
 
-**2024 retrospective results, 240 origins per market; lower is better.**
+## 3. Models and evaluation
 
-| Market | Lowest annual-variance RMSE | Lowest QLIKE |
-| --- | --- | --- |
-| CSI 300 | Fixed Ridge–RF blend (0.1423) | GARCH(1,1) (-2.4822) |
-| SSE Composite | GARCH(1,1) (0.1306) | GARCH(1,1) (-2.5192) |
-| ChiNext ETF proxy | Random Forest (0.8323) | GARCH(1,1) (-1.2169) |
+| Method | Purpose |
+| --- | --- |
+| 21-session rolling variance | Simple historical baseline |
+| GARCH(1,1) with Student-t innovations | Estimate changing conditional variance |
+| Random Forest | Model nonlinear relationships in lagged market features |
+| Log-variance Ridge | Linear benchmark using lagged volatility-related features |
+| Ridge + Random Forest (50/50) | Compare a fixed average of two model forecasts |
 
-Paired five-session moving-block bootstrap intervals for GARCH's QLIKE difference versus the simple 21-session baseline exclude zero for CSI 300 and SSE, but **not** for ChiNext. This is exploratory retrospective inference; model-development and multiple-comparison uncertainty remain.
+The models predict annualized next-session variance. The evaluation target is:
 
-**Risk:** An exploratory **Gaussian**, zero-conditional-mean 95% VaR test produced 7, 11 and 6 GARCH VaR breaches (out of 240) for CSI 300, SSE and the ChiNext ETF respectively. The Kupiec test alone cannot establish tail-risk adequacy. The original blanket claim that Gaussian VaR universally fails is not supported.
-
-**Economics:** At an illustrative 20% annual volatility target, 100% maximum exposure and 10 bps per unit turnover, GARCH-managed annualized returns were lower than static exposure in all three markets. ChiNext drawdown fell from approximately -25.50% to -17.54%, but annualized return and Sharpe also fell. For CSI and SSE, maximum drawdowns were essentially unchanged in this 2024 sample. **No universal performance or capital-protection benefit is claimed.**
-
-Full model-by-model RMSE/MAE/QLIKE values, block-bootstrap intervals, per-date forecasts, Gaussian and per-origin fitted Student-t VaR/parametric ES diagnostics, conditional-coverage testing, zero/5/10/20 bps sensitivity and exact calculation assumptions are in [the full v2.2 results report](docs/RESEARCH_V22_ARCHIVED_RESULTS.md) and [research v2.2 outputs](outputs/research_v22/).
-
-## Reproduction
-
-Install NumPy, pandas, scikit-learn, SciPy and `arch` (the tested dependency ranges appear in `.github/workflows/research-v2-tests.yml`).
-
-```bash
-python -m unittest discover -s tests -v
-python scripts/run_archived_v22.py --market CSI_300 --out-dir staging/research_v22
-python scripts/run_archived_v22.py --market SSE_Composite --out-dir staging/research_v22
-python scripts/run_archived_v22.py --market ChiNext --out-dir staging/research_v22
-python scripts/summarize_archived_v22.py --source-dir staging/research_v22 --out-dir staging/v22_summary
-python scripts/assess_archived_v22_risk.py --source-dir staging/research_v22 --out-dir staging/v22_risk\npython main.py --verify-v22\npython main.py --run-gui  # opens the offline research dashboard
+```text
+252 × [log(Close[t+1] / Close[t])]^2
 ```
 
-The experimental scripts refuse to overwrite existing releases. Separate scripts can reassemble an interrupted run from complete timestamp- and SHA-verified chunks. Main entry point `python main.py --run-pipeline` and the optional PyQt GUI still run the **legacy** implementation; their archived reports are not interchangeable with the corrected v2.2 results.
+This is an observable but noisy approximation of conditional variance. RMSE and MAE measure forecast errors, while QLIKE gives a different perspective on variance-forecast quality.
 
-## Repository guide and limitations
+The Ridge specification uses features inspired by HAR models; it is **not a standard HAR-RV implementation**. The 50/50 combination uses fixed weights and is **not an adaptive copula model**.
 
-- `config/research_protocol_v22.json`: active original-data study design and disclosed retrospective amendments.
-- `src/research_design.py`: forward target construction and mature-label rules.
-- `src/oos_forecasting_v2.py`: aligned benchmark, Ridge, RF, blend and actual GARCH variance forecasts.
-- `src/research_statistics_v22.py`: dependence-aware paired QLIKE loss intervals.
-- `src/risk_economic_v22.py`: ex-ante Gaussian VaR and simple-return cost-aware exposure analysis.
-- `scripts/run_archived_v22.py`, `scripts/summarize_archived_v22.py`, `scripts/assess_archived_v22_risk.py`: reproducibility workflow.
-- `docs/RESEARCH_V22_ARCHIVED_RESULTS.md`: full findings, evidence and caveats.
-- `docs/FINAL_PANEL_REVIEW.md` and `docs/FINAL_FILE_AUDIT.csv`: admissions-style methodological review and tracked-file structural audit.
-- `outputs/research_v22/`: saved forecasts, hashes, comparisons, fitted Student-t conditional VaR/ES, risk/economic sensitivity and self-contained `dashboard.html`.\n- `main.py --run-gui`: verified browser dashboard; `--run-pipeline` regenerates v2.2 into a new staging directory; superseded legacy pipeline requires explicit `--run-legacy-pipeline --allow-legacy-overwrite`.
+## 4. Forecasting results
 
-**Not yet established:** an independent post-2024 holdout, **formal Expected Shortfall backtesting**, canonical HAR-RV, full risk-model calibration across multiple windows, or a realistic tradable index/ETF total-return simulation. Fitted Student-t VaR and Christoffersen diagnostics now exist; parametric ES is calculated but not formally backtested. The verified offline HTML dashboard is the default; the optional Qt interface remains environment-dependent. These limitations are part of the research record. Negative results remain valid findings.
+The table below gives the lowest RMSE and lowest QLIKE model in each market. Both metrics are calculated against the same 2024 next-session variance target; **lower values are better**.
+
+| Market | Lowest RMSE | Lowest QLIKE |
+| --- | --- | --- |
+| CSI 300 | Ridge–RF 50/50 (0.1423) | GARCH(1,1) (−2.4822) |
+| SSE Composite | GARCH(1,1) (0.1306) | GARCH(1,1) (−2.5192) |
+| ChiNext ETF | Random Forest (0.8323) | GARCH(1,1) (−1.2169) |
+
+GARCH had the lowest QLIKE across all three markets. However, the lowest RMSE model differed by market. The Ridge model and its combination with Random Forest did not consistently improve on simpler alternatives.
+
+A five-session moving-block bootstrap was used to compare QLIKE against the rolling-variance baseline. The estimated GARCH improvements had 95% intervals below zero for CSI 300 and SSE Composite, but not for the ChiNext ETF. These comparisons are exploratory because the evaluation period was already examined during model development.
+
+## 5. Value at Risk and Expected Shortfall
+
+The project fits a Student-t GARCH distribution at each forecast date to estimate 95% VaR and parametric ES. The VaR forecasts are checked using Kupiec and Christoffersen tests.
+
+| Market | VaR breaches / 240 | Kupiec p-value | Conditional-coverage p-value |
+| --- | ---: | ---: | ---: |
+| CSI 300 | 7 | 0.1094 | 0.2248 |
+| SSE Composite | 12 | 1.0000 | 0.5301 |
+| ChiNext ETF | 8 | 0.2084 | 0.3436 |
+
+The tests did not reject the specified VaR coverage conditions at the 5% level. This is not proof of accurate risk estimates under every market condition. **Expected Shortfall was calculated but not formally backtested.**
+
+## 6. Volatility-based strategy
+
+A simple comparison uses GARCH forecasts to reduce or maintain equity exposure. The strategy targets 20% annual volatility, allows no leverage, assumes zero return on unused cash, and applies 10 basis points of cost per unit of turnover.
+
+| Market | Static annualized return | Volatility-managed return | Static max drawdown | Managed max drawdown |
+| --- | ---: | ---: | ---: | ---: |
+| CSI 300 | 19.08% | 17.44% | −14.41% | −14.41% |
+| SSE Composite | 15.83% | 11.77% | −14.73% | −14.73% |
+| ChiNext ETF | 20.97% | 5.12% | −25.50% | −17.54% |
+
+The volatility-managed approach reduced the ChiNext drawdown, but its return was substantially lower. It did not improve maximum drawdown for CSI 300 or SSE Composite during this period. These are illustrative calculations based on the stored price series, not a fully tradable total-return backtest.
+
+## 7. Project files and dashboard
+
+The updated model scripts, test suite, results, and offline dashboard are currently available in the [updated project files](https://github.com/amitdudi04/china-volatility-modeling/tree/research/phase1-2-data-timing-2026-10-12).
+
+| File or folder | What it contains |
+| --- | --- |
+| [Model scripts](https://github.com/amitdudi04/china-volatility-modeling/tree/research/phase1-2-data-timing-2026-10-12/src) | Feature preparation, volatility forecasts, and risk calculations |
+| [Results](https://github.com/amitdudi04/china-volatility-modeling/tree/research/phase1-2-data-timing-2026-10-12/outputs/research_v22) | Predictions, model comparisons, VaR/ES outputs, and strategy figures |
+| [Dashboard](https://github.com/amitdudi04/china-volatility-modeling/blob/research/phase1-2-data-timing-2026-10-12/outputs/research_v22/dashboard.html) | Offline view of forecast, risk, and strategy results |
+| [Detailed results](https://github.com/amitdudi04/china-volatility-modeling/blob/research/phase1-2-data-timing-2026-10-12/docs/RESEARCH_V22_ARCHIVED_RESULTS.md) | Methods, numerical tables, and additional analysis |
+| [Tests](https://github.com/amitdudi04/china-volatility-modeling/tree/research/phase1-2-data-timing-2026-10-12/tests) | Checks for data alignment, forecast calculations, risk metrics, and saved outputs |
+
+To run the updated version locally:
+
+```bash
+git clone https://github.com/amitdudi04/china-volatility-modeling.git
+cd china-volatility-modeling
+git switch research/phase1-2-data-timing-2026-10-12
+
+python -m pip install "numpy>=1.24,<3" "pandas>=2,<3" "scikit-learn>=1.4,<2" "arch>=7,<9"
+python -m unittest discover -s tests -v
+python main.py --verify-v22
+python main.py --run-gui
+```
+
+The dashboard works offline using saved output files. **The default `main` branch still contains the earlier pipeline**; switch to the branch above to run the updated models and view their corresponding results.
+
+## 8. Limitations
+
+The CSI 300 history is shorter than that of the other instruments, and the ChiNext data represent an ETF rather than the price index. The 2024 evaluation is a previously examined historical period, not an independent holdout. Daily squared returns are noisy variance targets, and one Ridge forecast safeguard was adjusted after reviewing a 2024 outlier. ES has not been formally backtested, and the strategy results exclude several real-world costs and total-return adjustments.
+
+Overall, the project shows how different volatility models compare across these three markets, how their forecasts can be applied to risk estimation, and where the results do—and do not—support a volatility-based allocation approach.
