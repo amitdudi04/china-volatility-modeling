@@ -15,9 +15,10 @@ sys.path.insert(0,str(ROOT))
 from scripts.run_archived_v22 import load_legacy_data
 from src.research_design import prepare_session_dataset
 from src.oos_forecasting_v2 import score_variance_predictions
+from src.utils.archived_digest import archived_file_sha256
 
 def sha(path):
-    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+    return archived_file_sha256(path)
 
 def assemble(market:str, parts_dir:Path, target_dir:Path):
     parts_dir,target_dir=Path(parts_dir),Path(target_dir)
