@@ -8,6 +8,9 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+import sys
+ROOT=Path(__file__).resolve().parents[1]
+sys.path.insert(0,str(ROOT))
 import numpy as np
 import pandas as pd
 from src.gui.v22_data import MARKETS,load_research_market
