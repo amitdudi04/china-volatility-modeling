@@ -64,7 +64,7 @@
   },
   "model_plan": [
     "21-session trailing annualized squared-return baseline",
-    "HAR-inspired log-variance Ridge regression",
+    "Log-variance Ridge regression with lagged features and causal historical-range guardrail (NOT canonical HAR)",
     "Random Forest regression on causal lagged features",
     "50/50 Ridge/RF mix",
     "Student-t GARCH(1,1) fitted using returns through origin t"
@@ -77,5 +77,11 @@
     "Model tuning has already been influenced by previously examined legacy results, so this is retrospective evaluation, not untouched holdout",
     "Daily squared returns are noisy conditional-variance proxies",
     "Cross-market price-index vs ETF comparisons have different instrument characteristics"
-  ]
+  ],
+  "post_hoc_amendment": {
+    "date": "2026-10-12",
+    "trigger": "Initial full 2024 CSI300 historical diagnostic showed one Ridge conditional variance forecast >873, far beyond the 21-day historical forecast; six-origin pilot had missed it.",
+    "changes": "Clip log-variance Ridge prediction into historical training bounds [min(trailing21/10, train target 1st percentile), max(5*trailing21, 3*train target 99th percentile)]. No future target values inform clipping at origin t.",
+    "classification": "retrospective exploratory model correction; all subsequent performance remains retrospective, NOT independent untouched OOS validation"
+  }
 }
