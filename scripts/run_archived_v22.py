@@ -25,6 +25,7 @@ ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
 from src.research_design import prepare_session_dataset
 from src.oos_forecasting_v2 import forecast_one_origin,score_variance_predictions
+from src.utils.archived_digest import archived_file_sha256
 
 PROTOCOL_FILE=ROOT/"config"/"research_protocol_v22.json"
 
@@ -39,7 +40,7 @@ def load_legacy_data(market: str, repo_root: Path = ROOT) -> tuple[pd.DataFrame,
     path=Path(repo_root)/spec["path"]
     if not path.is_file():
         raise FileNotFoundError(f"Archived data missing: {path}")
-    sha=hashlib.sha256(path.read_bytes()).hexdigest()
+    sha=archived_file_sha256(path)
     data=pd.read_csv(path,parse_dates=["Date"])
     mandatory={"Date","Close","Open","High","Low","Volume"}
     if not mandatory.issubset(data.columns):
@@ -134,8 +135,8 @@ def run_archived(market: str, *, limit: int=0, offset: int=0,
         "n_estimators":n_estimators,
         "model_fitting":"expanding, daily refits; no targets with end date beyond forecast origin",
         "generated_utc":datetime.now(timezone.utc).isoformat(),
-        "predictions_sha256":hashlib.sha256(pred_path.read_bytes()).hexdigest(),
-        "scores_sha256":hashlib.sha256(score_path.read_bytes()).hexdigest(),
+        "predictions_sha256":archived_file_sha256(pred_path),
+        "scores_sha256":archived_file_sha256(score_path),
         "limitations":[
             "Retrospective prequential evaluation, NOT previously untouched holdout",
             "CSI history starts 2021; SSE and ChiNext ETF start 2015",
