@@ -66,6 +66,7 @@ The experimental scripts refuse to overwrite existing releases. Separate scripts
 - `src/risk_economic_v22.py`: ex-ante Gaussian VaR and simple-return cost-aware exposure analysis.
 - `scripts/run_archived_v22.py`, `scripts/summarize_archived_v22.py`, `scripts/assess_archived_v22_risk.py`: reproducibility workflow.
 - `docs/RESEARCH_V22_ARCHIVED_RESULTS.md`: full findings, evidence and caveats.
+- `docs/FINAL_PANEL_REVIEW.md` and `docs/FINAL_FILE_AUDIT.csv`: admissions-style methodological review and tracked-file structural audit.
 - `outputs/research_v22/`: saved forecasts, hashes, comparisons, fitted Student-t conditional VaR/ES, risk/economic sensitivity and self-contained `dashboard.html`.\n- `main.py --run-gui`: verified browser dashboard; `--run-pipeline` regenerates v2.2 into a new staging directory; superseded legacy pipeline requires explicit `--run-legacy-pipeline --allow-legacy-overwrite`.
 
 **Not yet established:** an independent post-2024 holdout, **formal Expected Shortfall backtesting**, canonical HAR-RV, full risk-model calibration across multiple windows, or a realistic tradable index/ETF total-return simulation. Fitted Student-t VaR and Christoffersen diagnostics now exist; parametric ES is calculated but not formally backtested. The verified offline HTML dashboard is the default; the optional Qt interface remains environment-dependent. These limitations are part of the research record. Negative results remain valid findings.
