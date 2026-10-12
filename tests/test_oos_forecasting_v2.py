@@ -23,9 +23,9 @@ class ForecastingTests(unittest.TestCase):
         self.assertLessEqual(x["training_observations"], 300)
         self.assertGreater(x["training_observations"], 100)
         self.assertAlmostEqual(
-            x["har_rf_equal_variance"],
-            (x["har_ridge_variance"]+x["random_forest_variance"])/2)
-        self.assertTrue(x["har_rf_equal_variance"]>0)
+            x["ridge_rf_equal_variance"],
+            (x["logvar_ridge_variance"]+x["random_forest_variance"])/2)
+        self.assertTrue(x["ridge_rf_equal_variance"]>0)
 
     def test_future_changes_do_not_change_prior_prediction(self):
         f=self.dataset()
@@ -36,8 +36,8 @@ class ForecastingTests(unittest.TestCase):
         b.loc[b.index>b.index[310],"target_variance_ann"]=123.45
         q=forecast_one_origin(b,t,min_training=100,
                               include_garch=False,n_estimators=8)
-        for key in ("rolling_21_variance","har_ridge_variance",
-                    "random_forest_variance","har_rf_equal_variance"):
+        for key in ("rolling_21_variance","logvar_ridge_variance",
+                    "random_forest_variance","ridge_rf_equal_variance"):
             self.assertAlmostEqual(a[key],q[key])
 
     def test_walk_forward_alignment_and_metrics(self):
@@ -50,8 +50,8 @@ class ForecastingTests(unittest.TestCase):
         self.assertTrue((pd.to_datetime(p["target_end_date"])>p.index).all())
         m=score_variance_predictions(p)
         self.assertEqual(set(m["model"]),
-                         {"rolling_21_variance","har_ridge_variance",
-                          "random_forest_variance","har_rf_equal_variance"})
+                         {"rolling_21_variance","logvar_ridge_variance",
+                          "random_forest_variance","ridge_rf_equal_variance"})
         self.assertTrue(np.isfinite(m[["rmse","mae","qlike"]]).all().all())
 
     def test_short_history_fails(self):
