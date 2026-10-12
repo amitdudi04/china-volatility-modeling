@@ -49,6 +49,14 @@ def inventory(output:Path):
     results=[]
     for rel in tracked:
         file=ROOT/rel
+        # A self-referential CSV cannot contain its own fixed SHA-256; record
+        # that limitation explicitly rather than manufacturing a checksum.
+        if file.resolve()==output.resolve():
+            results.append({"path":rel,"role":"AUDIT_REGISTER_SELF",
+                            "extension":".csv","bytes":"","sha256":"SELF_REFERENTIAL",
+                            "structure":"SELF_REFERENTIAL",
+                            "rows_or_nodes":"","alert":""})
+            continue
         entry={"path":rel,"role":role(rel),"extension":file.suffix.lower(),
                "bytes":file.stat().st_size if file.is_file() else 0,
                "sha256":hashlib.sha256(file.read_bytes()).hexdigest() if file.is_file() else "",
@@ -80,7 +88,7 @@ def inventory(output:Path):
                     target=target.split("#")[0].split("?")[0]
                     if not target or "://" in target or target.startswith(("mailto:","#")):
                         continue
-                    if not (file.parent/target).exists():
+                    if not (file.parent/target).exists() and (file.parent/target).resolve()!=output.resolve():
                         missing.append(target)
                 if missing:
                     entry["alert"]="BROKEN_RELATIVE_LINK:"+",".join(missing[:3])
