@@ -1,6 +1,6 @@
 {
-  "schema_version": "research-protocol-v2.0",
-  "status": "frozen-design-pending-historical-data-recovery-and-validation",
+  "schema_version": "research-protocol-v2.1",
+  "status": "amended-protocol-pending-three-index-data-validation",
   "frozen_date": "2026-10-12",
   "legacy_main_commit": "c7d78bf4e59d3e1c08eedd429339398f82157f97",
   "research_question": "Do causally generated conditional-volatility forecasts improve out-of-sample risk prediction and exposure management across three Chinese A-share instruments?",
@@ -8,22 +8,23 @@
     "CSI_300": {
       "ticker": "000300.SS",
       "instrument": "CSI 300 price index",
-      "historical_source": "yfinance with explicit settings"
+      "historical_source": "AKShare stock_zh_index_daily_em / EastMoney historical price index"
     },
     "SSE_Composite": {
       "ticker": "000001.SS",
       "instrument": "SSE Composite price index",
-      "historical_source": "yfinance with explicit settings"
+      "historical_source": "AKShare stock_zh_index_daily_em / EastMoney historical price index"
     },
     "ChiNext": {
-      "ticker": "159915.SZ",
-      "instrument": "E Fund ChiNext ETF, not ChiNext index",
-      "reference_index": "399006.SZ",
-      "historical_source": "yfinance with explicit settings"
+      "ticker": "399006.SZ",
+      "source_symbol": "sz399006",
+      "instrument": "ChiNext price index (not legacy 159915.SZ ETF)",
+      "historical_source": "AKShare stock_zh_index_daily_em / EastMoney historical price index",
+      "legacy_symbol": "159915.SZ ETF proxy; retained unchanged in published 2015-2024 baseline only"
     }
   },
-  "raw_price": "Close",
-  "price_adjustment_rule": "Legacy raw Close is retained unchanged. Before extending, document provider auto_adjust/split/dividend policy and review any ETF corporate actions; do not splice adjusted and unadjusted prices.",
+  "raw_price": "EastMoney index close, price-level series only (not total return)",
+  "price_adjustment_rule": "All three v2.1 series are market price indices from one EastMoney interface. For price indices, research Close = raw Close; no ETF corporate-action adjustment or synthetic fill. Do not compare these as investable total returns.",
   "sessions_timezone": "Asia/Shanghai",
   "decision_time": "after market close at origin session t",
   "training_rule": "At any origin t, a sample is eligible only after its target_end_date <= t. Features must be measurable by close t.",
@@ -60,5 +61,7 @@
     "No model-performance claims before a complete reproducible rerun."
   ],
   "data_ready": false,
-  "data_readiness_reason": "CSI 300 legacy raw file starts in 2021, and all three legacy raw files stop on 2024-12-30. Provenance-checked extensions are required before comparative validation and new holdout."
+  "data_readiness_reason": "EastMoney index download must successfully return and validate three index histories through September 2026; no v2.1 forecasts have yet been fitted.",
+  "amendment_date": "2026-10-12",
+  "amendment_reason": "Before any v2 model training or outcome reporting, replace the legacy 159915.SZ ETF proxy with the actual ChiNext price index 399006 (EastMoney sz399006), for a coherent three-price-index comparison. Yahoo Finance CSI history and EastMoney ETF-adjustment downloads failed on CI; the v2.1 approach avoids both mismatches."
 }
