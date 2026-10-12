@@ -42,6 +42,8 @@ def export_dashboard(destination:Path):
             "scores":d["model_summary"].to_dict(orient="records"),
             "bootstrap":d["bootstrap"].to_dict(orient="records"),
             "risk":d["risk"].to_dict(orient="records"),
+            "student_t_risk":d["student_t_risk"].to_dict(orient="records"),
+            "student_t_es":d["student_t_es"].to_dict(orient="records"),
             "strategies":d["strategy"].loc[d["strategy"]["cost_bps"]==10].to_dict(orient="records"),
         }
         payload[market]=datasets
@@ -120,7 +122,7 @@ function render(){
  root.innerHTML='<section>'+heading('Realized proxy and forecasts — annualized volatility')+'<p>Square roots of annualized variance for visualization only. The measured next-session squared return is noisy.</p><canvas id="mainchart"></canvas></section><section>'+heading('Paired block-bootstrap QLIKE differences vs rolling baseline')+table(d.bootstrap,['model','mean_qlike_difference','ci95_low','ci95_high','ci_excludes_zero'])+'<p>Intervals are conditional on retrospective model choices and do not account for all multiple comparisons.</p></section>';
  requestAnimationFrame(()=>chart(document.getElementById('mainchart'),{'Realized':d.realized,'GARCH':d.garch,'Random Forest':d.rf},d.dates,'Annualized volatility'));
  }else if(page==='Tail risk'){
- root.innerHTML='<section>'+heading('Gaussian 95% VaR — Kupiec unconditional coverage')+'<p class="warning">Nonrejection of Kupiec coverage does NOT prove safe tail-risk forecasting. These earlier diagnostics do NOT describe Student-t ES or conditional-coverage tests.</p>'+table(d.risk,['model','observations','breaches','observed_rate','kupiec_pvalue'],['observed_rate'])+'</section>';
+ root.innerHTML='<section>'+heading('Fitted Student-t GARCH 95% VaR')+'<p class="warning">Student-t location, scale and degrees of freedom are fitted per forecasting origin. Kupiec and Christoffersen p-values concern exceedance rates/dependence only, NOT guaranteed safe tail-risk forecasting.</p>'+table(d.student_t_risk,['market','observations','breaches','observed_rate','kupiec_pvalue','christoffersen_ind_pvalue','christoffersen_cc_pvalue'],['observed_rate'])+'</section><section>'+heading('Parametric Expected Shortfall — descriptive only')+table(d.student_t_es,['market','n_exceedances','mean_realized_exceedance_log_return','mean_model_ES_on_exceedance_sessions','formal_ES_backtest'])+'<p>Formal ES backtesting was NOT performed.</p></section><section>'+heading('Earlier zero-mean Gaussian 95% VaR: model comparison')+table(d.risk,['model','observations','breaches','observed_rate','kupiec_pvalue'],['observed_rate'])+'</section>';
  }else{
  const rows=d.strategies.filter(x=>x.forecast_model==='garch11_variance'||x.strategy==='static').filter((x,i,a)=>a.findIndex(y=>y.strategy===x.strategy&&y.forecast_model===x.forecast_model)===i);
  root.innerHTML='<section>'+heading('Illustrative static vs GARCH-managed wealth, 10 bps')+'<p>Long-only, 20% volatility target, max exposure 100%, cash yield 0. Returns exclude dividends and full implementability costs.</p><canvas id="mainchart"></canvas></section><section>'+heading('Economic sensitivity at 10 bps')+table(rows,['strategy','annualized_return','annualized_vol','sharpe_zero_cash','max_drawdown','average_exposure'],['annualized_return','annualized_vol','max_drawdown','average_exposure'])+'</section>';
