@@ -1,0 +1,33 @@
+{
+  "protocol_version": "research-protocol-v2.2-legacy-archive",
+  "status": "retrospective_2024_full",
+  "not_an_untouched_holdout": true,
+  "source": {
+    "market": "ChiNext",
+    "source_relative_path": "data/raw/ChiNext.csv",
+    "instrument": "CHI NEXT ETF PROXY \u2014 NOT CHINEXT PRICE INDEX",
+    "symbol": "159915.SZ",
+    "rows": 2428,
+    "first": "2015-01-05",
+    "last": "2024-12-30",
+    "sha256": "42799ff7f8f85b9d3c80eecc7f7a56c667b2cdaf687ee68b98ffa4ca1b5e278f",
+    "git_blob_sha_at_legacy_snapshot": "72c1117c8c650144c90af70aac0f6f4da0b77a5e"
+  },
+  "total_eligible_2024_origins": 240,
+  "forecast_origins": 240,
+  "first_origin": "2024-01-02",
+  "last_origin": "2024-12-27",
+  "min_training": 252,
+  "n_estimators": 40,
+  "model_fitting": "expanding, daily refits; no targets with end date beyond forecast origin",
+  "generated_utc": "2026-10-12T13:42:12.259425+00:00",
+  "predictions_sha256": "ddb5e3678101a1ab2d613e2df4ce687f48cf34ab4da98d21f56fcfe31e264a4c",
+  "scores_sha256": "5ed8da68502756af28afcf30a1b90a9169fe07cc636dc35f4c887374ec3cca55",
+  "limitations": [
+    "Retrospective prequential evaluation, NOT previously untouched holdout",
+    "CSI history starts 2021; SSE and ChiNext ETF start 2015",
+    "ChiNext market uses raw-price ETF proxy 159915.SZ, not the index",
+    "One-day squared log return is a noisy latent-variance proxy",
+    "Model/strategy superiority has not been established by significance tests"
+  ]
+}
