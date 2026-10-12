@@ -30,7 +30,7 @@ CURRENT_PREFIXES=("outputs/research_v22/","tests/","config/research_protocol_v22
                   "docs/RESEARCH_V22_ARCHIVED_RESULTS.md")
 
 def role(rel:str)->str:
-    if rel.startswith(LEGACY_PATH_PREFIXES) or rel=="docs/results_analysis.docx":
+    if rel.startswith(LEGACY_PATH_PREFIXES) or rel in ("docs/results_analysis.docx","docs/legacy_results_analysis_2026_SUPERSEDED.docx"):
         return "LEGACY_ARTIFACT_RETAINED_NOT_V22_EVIDENCE"
     if rel.startswith(CURRENT_PREFIXES) or rel=="README.md" or rel=="main.py":
         return "ACTIVE_RESEARCH_V22"
