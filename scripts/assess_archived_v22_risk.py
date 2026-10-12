@@ -13,6 +13,7 @@ ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
 import pandas as pd
 from scripts.run_archived_v22 import load_legacy_data
+from src.utils.archived_digest import archived_file_sha256
 from src.risk_economic_v22 import (
     align_next_session_returns,normal_var_coverage,
     economic_exposure_sensitivity,
@@ -32,7 +33,7 @@ def assess(source_dir:Path,out_dir:Path)->dict:
         manifest=json.loads((source_dir/(stem+"_manifest.json")).read_text())
         if manifest["status"]!="retrospective_2024_full":
             raise ValueError("Partial models are not eligible for risk analysis")
-        if hashlib.sha256(path.read_bytes()).hexdigest()!=manifest["predictions_sha256"]:
+        if archived_file_sha256(path)!=manifest["predictions_sha256"]:
             raise ValueError("Source forecast hash mismatch")
         prices,info=load_legacy_data(market)
         if info["sha256"]!=manifest["source"]["sha256"]:
