@@ -32,7 +32,7 @@ class PublishedClaimTests(unittest.TestCase):
                 text=next(line for line in README.splitlines()
                     if line.startswith("| "+case["readme"]+" |")
                     and f"({a.rmse:.4f})" in line)
-                self.assertIn(f"({b.qlike:.4f})",text)
+                self.assertIn(f"({b.qlike:.4f})",text.replace("−", "-"))
 
     def test_student_t_var_backtest_figures_derive_from_csv(self):
         data=pd.read_csv(RESEARCH/"student_t_var_backtests.csv")
