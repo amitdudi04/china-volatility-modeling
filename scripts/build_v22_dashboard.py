@@ -7,7 +7,10 @@ refuses overwriting an existing dashboard without explicitly changing path.
 from __future__ import annotations
 import argparse
 import json
+import sys
 from pathlib import Path
+ROOT=Path(__file__).resolve().parents[1]
+sys.path.insert(0,str(ROOT))
 import numpy as np
 from src.gui.v22_data import MARKETS,load_research_market
 from src.risk_economic_v22 import align_next_session_returns
