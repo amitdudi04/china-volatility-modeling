@@ -1,6 +1,6 @@
 {
   "schema_version": "research-protocol-v2.2-legacy-archive",
-  "status": "ACTIVE_RESEARCH_DESIGN",
+  "status": "RELEASED_ARCHIVED_RETROSPECTIVE_REANALYSIS_WITH_VERIFIED_VaR",
   "amendment_date": "2026-10-12",
   "amendment_reason": "User elects to complete the research on the original 2015–2024 archival dataset; recovery through Sep 2026 is out of scope. The previous v2.1 all-price-index proposal is not executable on archived files.",
   "supersedes": "research-protocol-v2.1 proposed all-index 2015–2026 extension",
@@ -83,5 +83,18 @@
     "trigger": "Initial full 2024 CSI300 historical diagnostic showed one Ridge conditional variance forecast >873, far beyond the 21-day historical forecast; six-origin pilot had missed it.",
     "changes": "Clip log-variance Ridge prediction into historical training bounds [min(trailing21/10, train target 1st percentile), max(5*trailing21, 3*train target 99th percentile)]. No future target values inform clipping at origin t.",
     "classification": "retrospective exploratory model correction; all subsequent performance remains retrospective, NOT independent untouched OOS validation"
+  },
+  "data_ready": true,
+  "data_readiness_reason": "Exactly original archived 2015-2024 CSVs are frozen and all three 2024 retrospective runs with source hashes are verified; no post-2024 external data are included.",
+  "risk_addendum": {
+    "status": "2026-10-12 verified",
+    "model": "Fitted Student-t GARCH(1,1) mean, sigma, degrees of freedom at each 2024 forecast origin",
+    "n_per_market": 240,
+    "checks": [
+      "saved variance reconciles against per-origin refit",
+      "standardized Student-t left-tail VaR and parametric ES",
+      "Kupiec, Christoffersen independence and conditional coverage"
+    ],
+    "formal_ES_backtest": false
   }
 }
