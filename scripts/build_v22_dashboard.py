@@ -42,7 +42,17 @@ def export_dashboard(destination:Path):
             "strategies":d["strategy"].loc[d["strategy"]["cost_bps"]==10].to_dict(orient="records"),
         }
         payload[market]=datasets
-    blob=json.dumps(payload,allow_nan=False,separators=(",",":"),ensure_ascii=True).replace("</","<\\/")
+    def sanitize(value):
+        if isinstance(value,dict):
+            return {key:sanitize(item) for key,item in value.items()}
+        if isinstance(value,list):
+            return [sanitize(item) for item in value]
+        if isinstance(value,(int,float,np.integer,np.floating)):
+            if not np.isfinite(value):
+                return None
+            return float(value) if isinstance(value,(float,np.floating)) else int(value)
+        return value
+    blob=json.dumps(sanitize(payload),allow_nan=False,separators=(",",":"),ensure_ascii=True).replace("</","<\\/")
     html=r'''<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Chinese Volatility Research v2.2 | Archived 2024</title>
