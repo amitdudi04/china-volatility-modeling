@@ -2,13 +2,6 @@ name: Research v2 - external data recovery
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - "research/**"
-    paths:
-      - "src/data_contract.py"
-      - "scripts/fetch_research_data_v2.py"
-      - ".github/workflows/recover-research-v2-data.yml"
 
 permissions:
   contents: read
