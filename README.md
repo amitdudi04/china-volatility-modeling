@@ -28,7 +28,7 @@ The ChiNext series is an **ETF, not the ChiNext price index**. Its closing price
 
 Models were evaluated at **240 dates in 2024 for each market** (720 market-date observations overall). Each forecast uses information available through that day's close and is compared with the return from the following trading session.
 
-The evaluation is historical and walk-forward. Because the 2024 results were examined during model development, this period should **not be described as an untouched holdout**.
+The evaluation is historical and walk-forward. Because the 2024 results were examined during model development, this is **not an untouched holdout**.
 
 ## 3. Models and evaluation
 
@@ -58,7 +58,7 @@ The table below gives the lowest RMSE and lowest QLIKE model in each market. Bot
 | --- | --- | --- |
 | CSI 300 | Ridge–RF 50/50 (0.1423) | GARCH(1,1) (−2.4822) |
 | SSE Composite | GARCH(1,1) (0.1306) | GARCH(1,1) (−2.5192) |
-| ChiNext ETF | Random Forest (0.8323) | GARCH(1,1) (−1.2169) |
+| ChiNext ETF proxy | Random Forest (0.8323) | GARCH(1,1) (−1.2169) |
 
 GARCH had the lowest QLIKE across all three markets. However, the lowest RMSE model differed by market. The Ridge model and its combination with Random Forest did not consistently improve on simpler alternatives.
 
