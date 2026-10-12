@@ -1,0 +1,64 @@
+{
+  "schema_version": "research-protocol-v2.0",
+  "status": "frozen-design-pending-historical-data-recovery-and-validation",
+  "frozen_date": "2026-10-12",
+  "legacy_main_commit": "c7d78bf4e59d3e1c08eedd429339398f82157f97",
+  "research_question": "Do causally generated conditional-volatility forecasts improve out-of-sample risk prediction and exposure management across three Chinese A-share instruments?",
+  "markets": {
+    "CSI_300": {
+      "ticker": "000300.SS",
+      "instrument": "CSI 300 price index",
+      "historical_source": "yfinance with explicit settings"
+    },
+    "SSE_Composite": {
+      "ticker": "000001.SS",
+      "instrument": "SSE Composite price index",
+      "historical_source": "yfinance with explicit settings"
+    },
+    "ChiNext": {
+      "ticker": "159915.SZ",
+      "instrument": "E Fund ChiNext ETF, not ChiNext index",
+      "reference_index": "399006.SZ",
+      "historical_source": "yfinance with explicit settings"
+    }
+  },
+  "raw_price": "Close",
+  "price_adjustment_rule": "Legacy raw Close is retained unchanged. Before extending, document provider auto_adjust/split/dividend policy and review any ETF corporate actions; do not splice adjusted and unadjusted prices.",
+  "sessions_timezone": "Asia/Shanghai",
+  "decision_time": "after market close at origin session t",
+  "training_rule": "At any origin t, a sample is eligible only after its target_end_date <= t. Features must be measurable by close t.",
+  "primary_target": "next_session_squared_log_return",
+  "primary_target_formula": "(log(Close[t+1]/Close[t]))**2",
+  "primary_horizon_sessions": 1,
+  "secondary_target": "next_5_session_annualized_root_mean_square_log_return",
+  "secondary_target_formula": "sqrt(252/5 * sum_{j=1..5} log(Close[t+j]/Close[t+j-1])**2)",
+  "secondary_horizon_sessions": 5,
+  "target_comparison_rule": "Evaluate the same target on identical origin and target timestamps for each model; report per-market and common-date panels.",
+  "windows": {
+    "development": {
+      "start": "2015-01-01",
+      "end": "2022-12-31",
+      "usage": "training and model development"
+    },
+    "validation": {
+      "start": "2023-01-01",
+      "end": "2024-12-31",
+      "usage": "chronological selection; legacy results already examined"
+    },
+    "new_holdout": {
+      "start": "2025-01-01",
+      "end": "2026-09-30",
+      "usage": "newly acquired post-legacy sample; freeze choices before fitting; not claimed guaranteed unseen"
+    }
+  },
+  "protocol_constraints": [
+    "Never train on observations with target_end_date later than the current forecast origin.",
+    "For each window, include only observations whose target_end_date falls inside the same window.",
+    "No backfill of features, forecasts, returns or risk thresholds.",
+    "Do not replace or silently expand the six tracked legacy market CSVs.",
+    "Existing 2015-2024 results are legacy baselines and must not be described as untouched holdout.",
+    "No model-performance claims before a complete reproducible rerun."
+  ],
+  "data_ready": false,
+  "data_readiness_reason": "CSI 300 legacy raw file starts in 2021, and all three legacy raw files stop on 2024-12-30. Provenance-checked extensions are required before comparative validation and new holdout."
+}
