@@ -67,3 +67,31 @@ A successful staged download does **not** prove the corrected forecasting,
 VaR, or trading simulations are valid. Freeze data artifacts and their hashes,
 then run true OOS models, diagnostics and economic evaluation before rewriting
 README claims or merging the draft PR as final research.
+
+
+## Source-recovery execution record — 2026-10-12
+
+The normal deterministic unit-test workflow passes; external-data recovery is
+a different, provider-dependent operation. Attempts to obtain fully validated
+three-market 2015–Sep 2026 input data did **not** produce a manifest/artifact.
+
+1. Yahoo Finance historical-index query for `000300.SS` returned no prices in
+   [run 38246058131](https://github.com/amitdudi04/china-volatility-modeling/actions/runs/38246058131).
+2. The initial EastMoney attempt returned **2,855 index sessions** each for
+   CSI 300 and SSE Composite, but its **legacy ETF** qfq adjustment request
+   terminated with a remote connection error in
+   [run 38246465478](https://github.com/amitdudi04/china-volatility-modeling/actions/runs/38246465478).
+   These numbers are observed in CI logs, **not a complete archived data release**.
+3. After protocol amendment v2.1 (three actual indices), the initial
+   [run 38246915452](https://github.com/amitdudi04/china-volatility-modeling/actions/runs/38246915452)
+   and bounded-retry
+   [run 38247074667](https://github.com/amitdudi04/china-volatility-modeling/actions/runs/38247074667)
+   failed at EastMoney connection resets for CSI 300 before data assembly.
+
+Both recovery workflows are now intentionally **manual-dispatch only**. A
+market-data provider outage should not generate failed routine PR tests.
+To complete recovery, execute the three-index script from an authorized
+machine/network that can access EastMoney; then verify its checksummed
+manifest and independently compare overlapping price levels with legacy
+source files before accepting the new study dataset. Never reconstruct
+missing market observations from the historical performance tables.
