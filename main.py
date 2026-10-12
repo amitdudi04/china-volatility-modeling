@@ -44,7 +44,6 @@ def main(argv=None):
 
     if args.run_gui:
         from scripts.build_v22_dashboard import export_dashboard
-        from pathlib import Path
         import webbrowser
         file=Path("outputs/research_v22/dashboard.html").resolve()
         if not file.is_file():
