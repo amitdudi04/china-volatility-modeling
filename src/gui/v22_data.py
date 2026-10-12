@@ -59,11 +59,38 @@ def load_research_market(market:str,root:Path|None=None)->dict:
             raise ValueError(f"Nonpositive or invalid variance in {col}")
     if not pred.index.equals(pd.to_datetime(pred.index)):
         raise ValueError("Invalid origin index")
+    # The Student-t extension was estimated at each historical forecast date,
+    # and is only displayed if all 720 days and the manifest hashes reconcile.
+    tail_manifest=json.loads((research/"student_t_tail_manifest.json").read_text(encoding="utf-8"))
+    if tail_manifest.get("row_count")!=720:
+        raise ValueError("Incomplete Student-t study")
+    for name,expected_hash in tail_manifest["results_sha256"].items():
+        if digest(research/name)!=expected_hash:
+            raise ValueError(f"Student-t data checksum mismatch: {name}")
+    tail_daily=pd.read_csv(research/"student_t_garch_tail_forecasts.csv",
+                           parse_dates=["origin_date","target_end_date"])
+    tail_backtests=pd.read_csv(research/"student_t_var_backtests.csv")
+    tail_description=pd.read_csv(research/"student_t_es_descriptive.csv")
+    t_market=tail_daily.loc[tail_daily.market==market].set_index("origin_date")
+    if not t_market.index.equals(pred.index):
+        raise ValueError("Student-t dates do not equal forecast origins")
+    if not np.allclose(t_market["annualized_conditional_variance"],
+                       pred["garch11_variance"],rtol=1e-9,atol=1e-11):
+        raise ValueError("Student-t conditional variance disagrees with saved GARCH forecasts")
+    if not (t_market["student_t_es_95"]<t_market["student_t_var_95"]).all():
+        raise ValueError("Invalid parametric ES ordering")
+    if len(tail_backtests[tail_backtests.market==market])!=1:
+        raise ValueError("Incomplete Student-t coverage diagnostics")
+    if len(tail_description[tail_description.market==market])!=1:
+        raise ValueError("Incomplete Student-t ES descriptive diagnostics")
     return {"market":market,"prices":prices,"source":info,"predictions":pred,
             "scores":scores,"model_summary":summary[summary.market==market].copy(),
             "risk":risk[risk.market==market].copy(),
             "strategy":econ[econ.market==market].copy(),
             "bootstrap":ci[ci.market==market].copy(),
+            "student_t_daily":t_market.copy(),
+            "student_t_risk":tail_backtests[tail_backtests.market==market].copy(),
+            "student_t_es":tail_description[tail_description.market==market].copy(),
             "manifest":manifest,
             "scope":"Retrospective historical 2024 prequential, NOT untouched holdout; exploratory post-hoc model correction.",
             "instrument_note":"ChiNext uses 159915.SZ ETF proxy (raw close), NOT the ChiNext index." if market=="ChiNext" else "Price index; not directly tradeable."}
