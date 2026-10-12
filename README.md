@@ -1,86 +1,71 @@
-# Empirical Analysis of Volatility and Risk Dynamics in Chinese Equity Markets
+# Volatility Forecasting and Risk Dynamics in Chinese Equity Markets
 
-**Author:** Amit Kumar Dudi  
-**Focus:** Quantitative Finance | Chinese Markets | Volatility Modeling  
+**Research v2.2 — retrospective reanalysis of the original archived 2015–2024 dataset**
 
-## 1. Overview
-This repository contains a professional-grade quantitative research pipeline designed to analyze volatility clustering, non-linear shock decay, and tail-risk dynamics within Chinese Equity Markets. 
+This repository studies whether econometric and machine-learning forecasts of **next-session conditional variance** improve out-of-sample risk forecasting and a simple volatility-targeted equity-exposure rule. This is an academic research exercise, **not** a claim of institutional-grade capital protection.
 
-Understanding variance in Chinese equities presents a unique modeling challenge due to the market's high policy sensitivity and massive retail investor base. This project bridges traditional econometrics with modern machine learning to dynamically forecast volatility across distinct market regimes (efficient large-caps vs. speculative tech boards), ultimately translating these forecasts into robust institutional risk-management protocols.
-This project provides a practical framework for understanding and managing volatility in emerging markets, where traditional modeling assumptions often fail due to structural inefficiencies.
-This project emphasizes practical risk management applications rather than purely theoretical modeling, highlighting how volatility forecasting directly informs portfolio risk control.
+> **Research integrity:** The earlier README's descriptions of an "adaptive hybrid copula," RMSE-weighted parameters, universal Gaussian VaR failure, and universally beneficial volatility management were **not supported by the legacy implementation or its results**. These claims have been withdrawn in this reanalysis. The original legacy result files are preserved for comparison, but the corrected 2024 experiment and its limitations are documented in [Research v2.2 — full archived results](docs/RESEARCH_V22_ARCHIVED_RESULTS.md).
 
-## 2. Methodology
-The forecasting and validation framework relies on an out-of-sample 1000-day rolling window methodology:
-* **Parametric Benchmarking (HAR-RV / GARCH):** Utilized to map historical variance persistence and linear mean-reversion.
-* **Machine Learning Ensembles (Random Forest):** Deployed to capture complex, non-linear policy shock decays using lagged return inputs.
-* **Adaptive Hybrid Copula:** Synthesizes parametric stability with ML shock-detection via RMSE-weighted coefficients to maximize forecast correlation.
-* **Tail-Risk Modeling (VaR):** Implements dynamic Student-t Value-at-Risk bounds, rigorously validated using Kupiec POF and Christoffersen backtests to ensure sufficient institutional capital protection.
-* **Statistical Validation:** Strict enforcement of residual diagnostics via Ljung-Box Q-tests and ARCH-LM tests to identify latent structural inefficiencies.
+## Markets and archived data
 
-## 3. Key Results
-* **Regime-Dependent Superiority:** The Adaptive Hybrid model demonstrated stronger performance than isolated baselines in mature markets (CSI 300), while raw Machine Learning models proved most effective in moderately inefficient noise-heavy environments (SSE Composite).
-* **Universal Fat-Tail Dynamics:** The successful application of Student-t VaR distributions across all tested indices empirically confirmed that standard Gaussian distributions systematically fail to capture extreme downside risk in China.
-* **Economic Translation:** Volatility-targeting strategies driven by the Hybrid forecast successfully smoothed equity curves and preserved capital. In the CSI 300, the methodology constrained maximum drawdowns to a manageable -13.17%, generating a robust risk-adjusted Sharpe ratio of 0.65.
+| Market | Instrument actually studied | Raw historical coverage |
+| --- | --- | --- |
+| CSI 300 | `000300.SS` **price index** | 2021-03-11 to 2024-12-30 (925 observations) |
+| SSE Composite | `000001.SS` **price index** | 2015-01-05 to 2024-12-30 (2,428 observations) |
+| ChiNext | `159915.SZ` **ETF proxy** — **not** the ChiNext price index | 2015-01-05 to 2024-12-30 (2,428 observations) |
 
-## 4. Visualization
-The following figures illustrate the alignment between forecasted and realized volatility across different market regimes:
+These are exactly the archived CSVs in `data/raw/`; no missing CSI history is fabricated, imputed, or assumed. The project originally predates the requested September 2026 extension, which is **not part of the completed study**. The ETF raw close must not be treated as a verified dividend-adjusted total-return series.
 
-- CSI 300 (efficient market)
-- ChiNext (high-volatility emerging market)
+## Corrected forecasting design
 
-These visualizations demonstrate how the model adapts to different structural conditions.
+At the close of session `t`, forecast annualized next-session conditional variance. Each model's score uses the same observed annualized next-session squared log return: `252 * log(Close[t+1]/Close[t])**2`. The one-day squared return is a **noisy** volatility proxy. Training labels are available only when their target end date is on or before the forecast origin.
 
-![CSI Volatility](outputs/figures/csi_volatility.png)
-![ChiNext Volatility](outputs/figures/chinext_volatility.png)
+Each market has **240 retrospectively evaluated 2024 origins** from January 2 to December 27. GARCH and the other models use expanding training with only information available at each forecast origin. The 2024 history has already been examined during research development and is **not an untouched or blind holdout**.
 
-## 5. Project Structure
-The repository is structured to prioritize academic clarity and technical reproducibility:
-```text
-project_root/
-├── src/                      # Core quantitative research source code
-│   ├── pipeline.py           # Master execution orchestrator
-│   ├── forecast_engine.py    # Hybrid and ML volatility models
-│   ├── statistical_tests.py  # Residual diagnostics (Ljung-Box, ARCH-LM)
-│   ├── risk_metrics.py       # Value-at-Risk (VaR) mapping and backtesting
-│   ├── economic_analysis.py  # Strategy simulation and drawdown constraints
-│   └── gui/                  # Visualization dashboard (optional interface)
-│
-├── docs/                     # Academic documentation
-│   └── results_analysis.docx # Final Results, Findings, and Hypothesis Validation
-│
-├── outputs/                  # Computed empirical data matrices
-├── main.py                   # CLI/GUI Entry Point
-└── README.md
-```
+Five forecasts are compared: a 21-session trailing variance baseline, genuine one-step Student-t GARCH(1,1), Random Forest, HAR-**inspired** log-variance Ridge (**not canonical HAR-RV**), and a fixed 50/50 Ridge–RF blend (**not an adaptive copula**). The Ridge forecast has a disclosed causal magnitude guardrail that was introduced after observing a large retrospective outlier.
 
-## 6. How to Run
-Ensure you have all dependencies installed before executing the pipeline or the dashboard.
+## Key empirical findings
 
-**Install Dependencies:**
+**2024 retrospective results, 240 origins per market; lower is better.**
+
+| Market | Lowest annual-variance RMSE | Lowest QLIKE |
+| --- | --- | --- |
+| CSI 300 | Fixed Ridge–RF blend (0.1423) | GARCH(1,1) (-2.4822) |
+| SSE Composite | GARCH(1,1) (0.1306) | GARCH(1,1) (-2.5192) |
+| ChiNext ETF proxy | Random Forest (0.8323) | GARCH(1,1) (-1.2169) |
+
+Paired five-session moving-block bootstrap intervals for GARCH's QLIKE difference versus the simple 21-session baseline exclude zero for CSI 300 and SSE, but **not** for ChiNext. This is exploratory retrospective inference; model-development and multiple-comparison uncertainty remain.
+
+**Risk:** An exploratory **Gaussian**, zero-conditional-mean 95% VaR test produced 7, 11 and 6 GARCH VaR breaches (out of 240) for CSI 300, SSE and the ChiNext ETF respectively. The Kupiec test alone cannot establish tail-risk adequacy. The original blanket claim that Gaussian VaR universally fails is not supported.
+
+**Economics:** At an illustrative 20% annual volatility target, 100% maximum exposure and 10 bps per unit turnover, GARCH-managed annualized returns were lower than static exposure in all three markets. ChiNext drawdown fell from approximately -25.50% to -17.54%, but annualized return and Sharpe also fell. For CSI and SSE, maximum drawdowns were essentially unchanged in this 2024 sample. **No universal performance or capital-protection benefit is claimed.**
+
+Full model-by-model RMSE/MAE/QLIKE values, block-bootstrap intervals, per-date forecasts, normal VaR coverage, zero/5/10/20 bps sensitivity and exact calculation assumptions are in [the full v2.2 results report](docs/RESEARCH_V22_ARCHIVED_RESULTS.md) and [research v2.2 outputs](outputs/research_v22/).
+
+## Reproduction
+
+Install NumPy, pandas, scikit-learn, SciPy and `arch` (the tested dependency ranges appear in `.github/workflows/research-v2-tests.yml`).
+
 ```bash
-pip install -r requirements.txt
+python -m unittest discover -s tests -v
+python scripts/run_archived_v22.py --market CSI_300 --out-dir staging/research_v22
+python scripts/run_archived_v22.py --market SSE_Composite --out-dir staging/research_v22
+python scripts/run_archived_v22.py --market ChiNext --out-dir staging/research_v22
+python scripts/summarize_archived_v22.py --source-dir staging/research_v22 --out-dir staging/v22_summary
+python scripts/assess_archived_v22_risk.py --source-dir staging/research_v22 --out-dir staging/v22_risk
 ```
 
-**To run the full econometric pipeline and generate new forecasts:**
-```bash
-python main.py --run-pipeline
-```
+The experimental scripts refuse to overwrite existing releases. Separate scripts can reassemble an interrupted run from complete timestamp- and SHA-verified chunks. Main entry point `python main.py --run-pipeline` and the optional PyQt GUI still run the **legacy** implementation; their archived reports are not interchangeable with the corrected v2.2 results.
 
-**To launch the Bloomberg-style institutional dashboard:**
-```bash
-python main.py --run-gui
-```
+## Repository guide and limitations
 
-## 7. Key Insights
-* **Structural Market Inefficiencies:** Persistent ARCH-LM failures in the ChiNext index empirically prove that it operates as a high-noise, speculative regime largely disconnected from standard parametric persistence bounds.
-* **Hybrid Model Robustness:** Synthesizing linear persistence with ML-based non-linear shock detection significantly improves predictive accuracy and correlation to realized variance.
-* **Practical Fiduciary Utility:** Robust variance forecasting is not purely academic; it is the fundamental mechanism required to dynamically size institutional positions and survive violent structural market crashes.
+- `config/research_protocol_v22.json`: active original-data study design and disclosed retrospective amendments.
+- `src/research_design.py`: forward target construction and mature-label rules.
+- `src/oos_forecasting_v2.py`: aligned benchmark, Ridge, RF, blend and actual GARCH variance forecasts.
+- `src/research_statistics_v22.py`: dependence-aware paired QLIKE loss intervals.
+- `src/risk_economic_v22.py`: ex-ante Gaussian VaR and simple-return cost-aware exposure analysis.
+- `scripts/run_archived_v22.py`, `scripts/summarize_archived_v22.py`, `scripts/assess_archived_v22_risk.py`: reproducibility workflow.
+- `docs/RESEARCH_V22_ARCHIVED_RESULTS.md`: full findings, evidence and caveats.
+- `outputs/research_v22/`: saved forecasts, hashes, comparisons and risk/economic sensitivity.
 
-## 8. Limitations
-- Persistent ARCH-LM failures in SSE Composite and ChiNext indicate incomplete capture of extreme volatility clustering  
-- Absence of macroeconomic and policy variables may limit explanatory power  
-- Machine learning models introduce interpretability constraints  
-- Results may be sensitive to rolling window length and parameter selection  
-
-This work demonstrates the importance of combining econometric structure with data-driven methods for robust financial modeling in complex and emerging market environments.
+**Not yet established:** an independent post-2024 holdout, standardized Student-t VaR and Expected Shortfall backtesting, canonical HAR-RV or a fully reconciled v2.2 GUI, and a realistic tradable index/ETF total-return simulation. These limitations are part of the research record. Negative results remain valid findings.
