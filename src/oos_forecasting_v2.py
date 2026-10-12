@@ -43,9 +43,12 @@ def forecast_one_origin(frame, origin, min_training=252,
     X, y = train[FEATURES], train["target_variance_ann"]
     if (y < 0).any() or current.isna().any().any():
         raise ValueError("Invalid causal features or variance targets")
+    # A log-variance Ridge benchmark, using HAR-inspired lagged features.
+    # Exponentiation enforces strictly positive forecasts without clipping
+    # potentially large negative variance predictions to an epsilon floor.
     ridge = make_pipeline(StandardScaler(), Ridge(alpha=10))
-    ridge.fit(X,y)
-    har = _clip_variance(ridge.predict(current)[0])
+    ridge.fit(X,np.log(np.maximum(y.to_numpy(dtype=float),1e-8)))
+    har = _clip_variance(np.exp(ridge.predict(current)[0]))
     rf = RandomForestRegressor(n_estimators=n_estimators, random_state=17,
                                max_features=.8, min_samples_leaf=8, n_jobs=1)
     rf.fit(X,y)
