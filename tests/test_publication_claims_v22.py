@@ -63,7 +63,7 @@ class PublishedClaimTests(unittest.TestCase):
         self.assertFalse((ROOT/"docs"/"results_analysis.docx").exists())
         self.assertTrue((ROOT/"docs"/"legacy_results_analysis_2026_SUPERSEDED.docx").exists())
         self.assertIn("not an untouched",README.lower())
-        self.assertIn("not an untouched",REPORT.lower())
+        self.assertIn("**not** an untouched",REPORT.lower())
         self.assertTrue((ROOT/"docs"/"FINAL_PANEL_REVIEW.md").exists())
 
 if __name__=="__main__":
