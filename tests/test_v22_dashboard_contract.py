@@ -14,6 +14,9 @@ class V22DashboardContractTests(unittest.TestCase):
                 self.assertEqual(len(d["scores"]),5)
                 self.assertEqual(len(d["risk"]),5)
                 self.assertEqual(len(d["strategy"]),16)
+                self.assertEqual(len(d["student_t_daily"]),240)
+                self.assertEqual(len(d["student_t_risk"]),1)
+                self.assertEqual(len(d["student_t_es"]),1)
                 self.assertIn("retrospective",d["scope"].lower())
 
     def test_chinext_is_not_called_an_index(self):
