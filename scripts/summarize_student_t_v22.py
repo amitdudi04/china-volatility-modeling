@@ -16,9 +16,10 @@ import pandas as pd
 from src.gui.v22_data import MARKETS,load_research_market
 from src.risk_economic_v22 import align_next_session_returns
 from src.student_t_risk_v22 import christoffersen_tests
+from src.utils.archived_digest import archived_file_sha256
 
 def sha(p:Path):
-    return hashlib.sha256(p.read_bytes()).hexdigest()
+    return archived_file_sha256(p)
 
 def aggregate(parts:Path,dest:Path):
     parts,dest=Path(parts),Path(dest)
