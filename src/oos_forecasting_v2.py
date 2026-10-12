@@ -43,12 +43,20 @@ def forecast_one_origin(frame, origin, min_training=252,
     X, y = train[FEATURES], train["target_variance_ann"]
     if (y < 0).any() or current.isna().any().any():
         raise ValueError("Invalid causal features or variance targets")
-    # A log-variance Ridge benchmark, using HAR-inspired lagged features.
+    # A log-variance Ridge benchmark, using HAR-inspired lagged features.\n    # Not a canonical HAR-RV model.
     # Exponentiation enforces strictly positive forecasts without clipping
     # potentially large negative variance predictions to an epsilon floor.
     ridge = make_pipeline(StandardScaler(), Ridge(alpha=10))
     ridge.fit(X,np.log(np.maximum(y.to_numpy(dtype=float),1e-8)))
-    har = _clip_variance(np.exp(ridge.predict(current)[0]))
+    raw_logvar = _clip_variance(np.exp(np.clip(ridge.predict(current)[0], -100, 100)))
+    # A causal, historical-only forecast magnitude guardrail: avoid Ridge
+    # extrapolations hundreds of times above observed training variance.
+    # Added AFTER a 2024 retrospective diagnostic revealed explosive
+    # extrapolation. This is exploratory, NOT preregistered evaluation.
+    baseline = _clip_variance(frame.loc[origin,"trailing_21_variance_ann"])
+    upper = max(5.0*baseline,3.0*float(np.quantile(y,0.99)),1e-5)
+    lower = max(1e-8, min(baseline/10.0,float(np.quantile(y,0.01))))
+    har = float(np.clip(raw_logvar,lower,upper))
     rf = RandomForestRegressor(n_estimators=n_estimators, random_state=17,
                                max_features=.8, min_samples_leaf=8, n_jobs=1)
     rf.fit(X,y)
@@ -58,9 +66,12 @@ def forecast_one_origin(frame, origin, min_training=252,
         "target_end_date": pd.Timestamp(frame.loc[origin,"target_end_date"]),
         "training_observations": len(train),
         "rolling_21_variance": _clip_variance(frame.loc[origin,"trailing_21_variance_ann"]),
-        "har_ridge_variance": har,
+        "logvar_ridge_variance": har,
+        "ridge_uncapped_diagnostic":raw_logvar,
+        "ridge_guardrail_upper":upper,
+        "ridge_was_capped":bool(abs(har-raw_logvar)>1e-12),
         "random_forest_variance": ml,
-        "har_rf_equal_variance": .5*(har+ml),
+        "ridge_rf_equal_variance": .5*(har+ml),
         "realized_next_variance": float(frame.loc[origin,"target_variance_ann"]),
     }
     if include_garch:
