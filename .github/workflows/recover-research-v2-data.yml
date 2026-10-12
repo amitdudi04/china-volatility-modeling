@@ -1,0 +1,31 @@
+name: Research v2 - external data recovery
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  recover-and-validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install minimal data libraries
+        run: python -m pip install "numpy>=1.24,<3" "pandas>=2,<3" "yfinance>=0.2.54,<1"
+      - name: Run deterministic offline tests
+        run: python -m unittest discover -s tests -v
+      - name: Download and validate three markets
+        run: python scripts/fetch_research_data_v2.py --output-dir staging/research-v2-20261012
+      - name: Upload source hashes and model-ready input files
+        uses: actions/upload-artifact@v4
+        with:
+          name: research-v2-staged-market-data-${{ github.run_id }}
+          path: staging/research-v2-20261012/
+          if-no-files-found: error
+          retention-days: 30

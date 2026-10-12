@@ -1,0 +1,25 @@
+{
+  "protocol": "research-protocol-v2.2-legacy-archive",
+  "status": "retrospective_OOS_not_blind",
+  "markets": [
+    "CSI_300",
+    "SSE_Composite",
+    "ChiNext"
+  ],
+  "all_three_common_evaluation_origins": 240,
+  "common_evaluation_start": "2024-01-02",
+  "common_evaluation_end": "2024-12-27",
+  "input_manifest_sha256": {
+    "CSI_300": "d8ce61aca7bcf1822d7e7a375673ab941932e2822ef6256af0395f0c3fa8d8f7",
+    "SSE_Composite": "5d5d3374428f544b258701dcd94638b7c10f3e1fb871c29a5dfe9cf1466cd555",
+    "ChiNext": "55b0a8561d1e2b4253783bda220fbf2205f92b33882c247789c30eae9f76ab45"
+  },
+  "limitations": [
+    "Historical 2024 outcomes and research design have been inspected: no claim of untouched holdout.",
+    "CSI 300 source history starts in 2021 and differs from other market histories.",
+    "ChiNext is 159915.SZ ETF proxy, not a price index; raw close omits dividend adjustments.",
+    "Ridge historical-range guardrail introduced after retrospective extreme-forecast observation.",
+    "One-session squared returns are noisy estimators of latent conditional variance.",
+    "QLIKE block bootstrap ignores model-selection uncertainty and does not establish strategy utility."
+  ]
+}

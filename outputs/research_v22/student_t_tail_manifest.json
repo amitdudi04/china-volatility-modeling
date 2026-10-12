@@ -1,0 +1,63 @@
+{
+  "scope": "2024 retrospectively evaluated, NOT blind holdout",
+  "Student_t_distribution": "per-origin fitted conditional mean, nu, standardized variance",
+  "var_alpha": 0.05,
+  "row_count": 720,
+  "markets": [
+    "CSI_300",
+    "SSE_Composite",
+    "ChiNext"
+  ],
+  "source_part_checksums": {
+    "CSI_300": {
+      "source_prediction_sha256": "4ce2416a868dccbfeeaf7745f48a97f8725d61bc7993d26e09f5c6e3dfbdf49e",
+      "tail_part_manifests": [
+        {
+          "manifest": "CSI_300_tail_part_0000_120.json",
+          "sha256": "152abded6df28effb9906c2d0b40fba101b86b236ffd6bcb53912c1dfbd64b17"
+        },
+        {
+          "manifest": "CSI_300_tail_part_0120_120.json",
+          "sha256": "c0b1f89efa3fbb987101ed838d817e8779e801c6192e402ba30a8000dbbb9ae5"
+        }
+      ]
+    },
+    "SSE_Composite": {
+      "source_prediction_sha256": "74868e1f574a39da446087fe0bd48200d75b0caf7fcc5ee2ccbbae20c208087a",
+      "tail_part_manifests": [
+        {
+          "manifest": "SSE_Composite_tail_part_0000_120.json",
+          "sha256": "ff53804fcd575e7108b0f739bbb4a87da686b060f4f6770ed94d4e4a94dded4d"
+        },
+        {
+          "manifest": "SSE_Composite_tail_part_0120_120.json",
+          "sha256": "5e6f90774715999cb18f8934053faf3d027dbc4de80fd8ce106454dbe9cad7e6"
+        }
+      ]
+    },
+    "ChiNext": {
+      "source_prediction_sha256": "ddb5e3678101a1ab2d613e2df4ce687f48cf34ab4da98d21f56fcfe31e264a4c",
+      "tail_part_manifests": [
+        {
+          "manifest": "ChiNext_tail_part_0000_120.json",
+          "sha256": "f9929ff72337fe89ae1702595ba1387f29d3490efc5edeb8d54e8e043c077fa6"
+        },
+        {
+          "manifest": "ChiNext_tail_part_0120_120.json",
+          "sha256": "278b3fbf23822572da4d32113b02b7c16b4c77e94ffbaba71d4728fad61c6146"
+        }
+      ]
+    }
+  },
+  "results_sha256": {
+    "student_t_garch_tail_forecasts.csv": "3b219300f4fbaeece90007670c2ca721e95837b1d848884cfd9f8126b5c5ddcd",
+    "student_t_var_backtests.csv": "ce70e22a67c7fa7e9453427bbd361c548795a17e301ef1b8d34c5c9e94c65eac",
+    "student_t_es_descriptive.csv": "db98966a938546ea0902a44ba5c90cd6a4f9d76efcff0a58d82750f79c26df2e"
+  },
+  "limitations": [
+    "Prior retrospective 2024 model tuning; not an untouched holdout.",
+    "Christoffersen VaR conditional-coverage includes LRuc and LRind; confidence not guaranteed by high p.",
+    "Expected Shortfall is parametric forecast only, not subject to formal ES backtest here.",
+    "No funding/transaction cost calibration inferred from the fitted conditional distribution."
+  ]
+}

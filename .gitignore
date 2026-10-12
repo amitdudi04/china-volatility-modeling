@@ -34,3 +34,6 @@ Thumbs.db
 
 # Project specific
 offline/
+
+# Private/offline v2.2 experimental working files (only verified releases go to outputs/)
+staging/

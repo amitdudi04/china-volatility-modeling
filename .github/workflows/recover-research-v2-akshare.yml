@@ -1,0 +1,30 @@
+name: Research v2 - EastMoney data recovery
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  recover-and-validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install AKShare and validation libraries
+        run: python -m pip install "numpy>=1.24,<3" "pandas>=2,<3" "akshare>=1.16,<2"
+      - name: Run all offline contract tests
+        run: python -m unittest discover -s tests -v
+      - name: Recover and validate EastMoney price histories
+        run: python scripts/fetch_research_data_v2_akshare.py --output-dir staging/research-v2-eastmoney-20261012
+      - name: Upload independently sourced input release
+        uses: actions/upload-artifact@v4
+        with:
+          name: research-v2-eastmoney-inputs-${{ github.run_id }}
+          path: staging/research-v2-eastmoney-20261012/
+          if-no-files-found: error
+          retention-days: 30
