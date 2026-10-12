@@ -8,6 +8,8 @@ on:
     paths:
       - "scripts/fetch_research_data_v2_akshare.py"
       - ".github/workflows/recover-research-v2-akshare.yml"
+      - "config/research_protocol_v2.json"
+      - "tests/test_akshare_mapping.py"
 
 permissions:
   contents: read
