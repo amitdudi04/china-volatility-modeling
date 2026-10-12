@@ -60,6 +60,14 @@ def assemble(market:str, parts_dir:Path, target_dir:Path):
         missing=expected.difference(merged.index)
         surplus=merged.index.difference(expected)
         raise ValueError(f"Missing {len(missing)} and surplus {len(surplus)} origin dates")
+    actual_target_dates=pd.to_datetime(x.loc[expected,"target_end_date"])
+    if not pd.to_datetime(merged["target_end_date"]).equals(actual_target_dates):
+        raise ValueError("Assembled target session does not match immutable original input")
+    import numpy as np
+    if not np.allclose(merged["realized_next_variance"].to_numpy(float),
+                       x.loc[expected,"target_variance_ann"].to_numpy(float),
+                       rtol=1e-11,atol=1e-13):
+        raise ValueError("Assembled next-session outcomes do not match original input")
     score=score_variance_predictions(merged)
     target_dir.mkdir(parents=True,exist_ok=True)
     stem=f"{market}_2024_complete"
