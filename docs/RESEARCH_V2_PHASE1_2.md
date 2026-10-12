@@ -1,5 +1,7 @@
 # Research v2 — Phase 1/2 provenance and evaluation protocol
 
+> **Protocol amendment 2026-10-12:** This document records the original legacy data inventory and the earlier v2.0 candidate design. For the corrected research v2.1, ChiNext is the actual price index `399006.SZ`, not the legacy ETF proxy `159915.SZ`. See [DATA_RECOVERY_V2.md](DATA_RECOVERY_V2.md) and [research_protocol_v2.json](../config/research_protocol_v2.json). No v2 models were fit before this amendment.
+
 Status: **provisional protocol, not a rerun of the published research** (2026-10-12).
 
 ## Legacy snapshot / immutable comparison point
