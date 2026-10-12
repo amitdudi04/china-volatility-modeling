@@ -21,6 +21,7 @@ from src.research_design import prepare_session_dataset
 from src.gui.v22_data import load_research_market
 from src.risk_economic_v22 import align_next_session_returns
 from src.student_t_risk_v22 import standardized_t_var_es,christoffersen_tests
+from src.utils.archived_digest import archived_file_sha256
 
 def compute(market,offset,limit,output_dir):
     if offset<0 or limit<1:
@@ -66,7 +67,7 @@ def compute(market,offset,limit,output_dir):
             print(f"{market}: Student-t VaR {num}/{len(selected)}; origin {origin.date()}",flush=True)
     out=pd.DataFrame(rows).set_index("origin_date")
     out.to_csv(path,float_format="%.15g")
-    digest=hashlib.sha256(path.read_bytes()).hexdigest()
+    digest=archived_file_sha256(path)
     manifest={"market":market,"forecast_origins":len(out),
               "offset":offset,"first":str(out.index.min().date()),
               "last":str(out.index.max().date()),
