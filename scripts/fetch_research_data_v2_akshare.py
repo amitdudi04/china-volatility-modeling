@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 import sys
+import time
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
@@ -39,6 +40,24 @@ def _index_frame(raw: pd.DataFrame, market: str) -> pd.DataFrame:
     return standardize_download(frame, MARKETS[market])
 
 
+def _fetch_index_with_retries(ak, ticker: str, attempts: int = 3):
+    """Retry transient provider/transport errors; never invent missing records."""
+    for number in range(1, attempts+1):
+        try:
+            response = ak.stock_zh_index_daily_em(
+                symbol=ticker, start_date=DATE_START, end_date=DATE_END)
+            if response is None or response.empty:
+                raise ValueError(f"{ticker}: provider returned empty history")
+            return response
+        except Exception as exc:
+            if number == attempts:
+                raise RuntimeError(
+                    f"{ticker}: all {attempts} EastMoney history requests failed") from exc
+            print(f"{ticker}: attempt {number}/{attempts} failed: {type(exc).__name__}. Retrying.", flush=True)
+            time.sleep(2*number)
+    raise AssertionError("Unreachable")
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-dir", required=True)
@@ -49,8 +68,7 @@ def main(argv=None):
     frames = {}
     for market,ticker in INDEX_SYMBOLS.items():
         print(f"Fetching EastMoney price index {market} ({ticker})", flush=True)
-        raw = ak.stock_zh_index_daily_em(
-            symbol=ticker, start_date=DATE_START, end_date=DATE_END)
+        raw = _fetch_index_with_retries(ak, ticker)
         frames[market] = _index_frame(raw, market)
         print(f"  received {len(frames[market])} index sessions", flush=True)
     manifest = write_immutable_staging(Path(args.output_dir), frames, {
