@@ -15,7 +15,7 @@ from src.research_design import prepare_session_dataset, chronological_partition
 MARKETS = {
     "CSI_300": "000300.SS",
     "SSE_Composite": "000001.SS",
-    "ChiNext": "159915.SZ",  # E Fund ETF proxy, not the index
+    "ChiNext": "399006.SZ",  # ChiNext price index; v2 protocol amendment
 }
 DATA_START = "2015-01-01"
 DATA_END_EXCLUSIVE = "2026-10-01"
