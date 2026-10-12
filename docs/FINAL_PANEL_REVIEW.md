@@ -16,7 +16,7 @@ The empirical sample remains archival and retrospective. A candidate should **no
 
 ## 1. File-by-file audit approach and extent
 
-The machine-readable inventory at [FINAL_FILE_AUDIT.csv](FINAL_FILE_AUDIT.csv) lists **every tracked file at the audited Git commit**, with SHA-256, path, byte size, format-specific structural checks and a role classification (`ACTIVE_RESEARCH_V22`, `LEGACY_ARTIFACT_RETAINED_NOT_V22_EVIDENCE`, etc.). The reproducible scanner is `scripts/inventory_review_v22.py`; it checks AST parseability of Python, CSV readability, JSON parsing, UTF-8 documents, PNG headers, and DOCX package integrity. Those are **structural checks, not full manual statistical verification of every historic image/paper/table**.
+The machine-readable inventory at [FINAL_FILE_AUDIT.csv](FINAL_FILE_AUDIT.csv) lists **every tracked file at its dated audit snapshot**, with SHA-256, path, byte size, format-specific structural checks and a role classification (`ACTIVE_RESEARCH_V22`, `LEGACY_ARTIFACT_RETAINED_NOT_V22_EVIDENCE`, etc.). The reproducible scanner is `scripts/inventory_review_v22.py`; it checks AST parseability of Python, CSV readability, JSON parsing, UTF-8 documents, PNG headers, and DOCX package integrity. Those are **structural checks, not full manual statistical verification of every historic image/paper/table**.
 
 Substantive forensic review focused on the finance-critical code and evidence flows:
 - **Frozen data:** `data/raw/*.csv`, `config/research_protocol_v22.json`, `src/research_design.py`, `scripts/run_archived_v22.py`.
