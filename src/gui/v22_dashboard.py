@@ -122,8 +122,10 @@ class ResearchDashboard(QMainWindow):
         v.addWidget(text_box(
             "EXPLORATORY 95% GAUSSIAN VaR: Zero forecast mean, sigma_daily = sqrt(predicted annual variance/252).\n"
             "Kupiec unconditional coverage checks the exceedance RATE only. A large p-value does NOT demonstrate safety, return-independence, tail calibration or adequate Expected Shortfall.\n"
-            "Results in this tab are NOT fitted Student-t VaR or Christoffersen tests."))
+            "Earlier Gaussian comparisons are separate from the fitted Student-t GARCH diagnostics shown below; high p-values do not guarantee valid risk buffers."))
         v.addWidget(show_table(d["risk"][["model","observations","breaches","observed_rate","kupiec_pvalue"]]))
+        v.addWidget(text_box("FITTED STUDENT-T GARCH: 240 origin-specific fits, standardized Student-t conditional VaR; expected shortfall calculated parametrically but NOT formally backtested."))
+        v.addWidget(show_table(d["student_t_risk"][["market","observations","breaches","kupiec_pvalue","christoffersen_ind_pvalue","christoffersen_cc_pvalue"]]))
         self.tabs.addTab(risk,"Tail risk")
 
         econ=QWidget();v=QVBoxLayout(econ)
@@ -147,7 +149,7 @@ class ResearchDashboard(QMainWindow):
             f"Evaluation: {d['scope']}\n\n"
             "Provenance, loss tables, source checks and model results live under outputs/research_v22/.\n"
             "Legacy src/pipeline.py / outputs/results are superseded for quantitative claims.\n"
-            "Remaining limits: no independent new-period test; ChiNext is an ETF proxy; no fully investable total-return simulation; no corrected Student-t ES diagnostics in this GUI."))
+            "Remaining limits: no independent new-period test; ChiNext is an ETF proxy; no fully investable total-return simulation; fitted Student-t VaR and parametric ES are available; no formal ES backtest; Qt display remains environment-dependent."))
         self.tabs.addTab(audit,"Provenance and limits")
 
 def main():
