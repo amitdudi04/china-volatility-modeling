@@ -14,11 +14,12 @@ sys.path.insert(0,str(ROOT))
 import pandas as pd
 from src.oos_forecasting_v2 import score_variance_predictions
 from src.research_statistics_v22 import bootstrap_qlike_differences
+from src.utils.archived_digest import archived_file_sha256
 
 MARKETS=("CSI_300","SSE_Composite","ChiNext")
 
 def sha(path):
-    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+    return archived_file_sha256(path)
 
 def summarize(source_dir:Path,destination_dir:Path,blocks=5,replications=2000):
     source_dir,destination_dir=Path(source_dir),Path(destination_dir)
