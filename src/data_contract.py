@@ -156,11 +156,11 @@ def write_immutable_staging(root: Path, markets: dict[str, pd.DataFrame],
     for market, frame in markets.items():
         path = root/"source_data"/f"{market}.csv"
         frame.to_csv(path, float_format="%.15g")
-        hashes[str(path.relative_to(root))] = sha256_file(path)
+        hashes[path.relative_to(root).as_posix()] = sha256_file(path)
         for (horizon, split_name), split in model_ready[market].items():
             path = root/"model_ready"/f"{market}_h{horizon}_{split_name}.csv"
             split.to_csv(path, float_format="%.15g", date_format="%Y-%m-%d")
-            hashes[str(path.relative_to(root))] = sha256_file(path)
+            hashes[path.relative_to(root).as_posix()] = sha256_file(path)
     manifest = {
         "release_type": "staged_market_inputs_not_model_results",
         "created_utc": datetime.now(timezone.utc).isoformat(),
