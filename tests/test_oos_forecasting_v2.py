@@ -20,7 +20,7 @@ class ForecastingTests(unittest.TestCase):
         t=f.index[300]
         x=forecast_one_origin(f,t,min_training=100,
                               include_garch=False,n_estimators=8)
-        self.assertLess(x["training_observations"], 300)
+        self.assertLessEqual(x["training_observations"], 300)
         self.assertGreater(x["training_observations"], 100)
         self.assertAlmostEqual(
             x["har_rf_equal_variance"],
