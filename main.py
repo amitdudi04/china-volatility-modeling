@@ -31,7 +31,7 @@ def rerun_v22(root:Path):
 def main(argv=None):
     parser=argparse.ArgumentParser(description="Chinese equity variance research; verified v2.2 archived dataset")
     actions=parser.add_mutually_exclusive_group()
-    actions.add_argument("--run-gui",action="store_true",help="Open final v2.2 PyQt6 research dashboard")
+    actions.add_argument("--run-gui",action="store_true",help="Open the verified offline browser research dashboard (no Qt dependency)")\n    actions.add_argument("--run-qt-gui",action="store_true",help="Try experimental v2.2 PyQt dashboard, dependent on local Qt graphics support")
     actions.add_argument("--verify-v22",action="store_true",help="Validate 3 market files and checksum-verified research predictions")
     actions.add_argument("--run-pipeline",action="store_true",help="Rerun the corrected v2.2 retrospective experiment (new outputs only)")
     actions.add_argument("--run-legacy-gui",action="store_true",help="Open historical, superseded GUI for comparison only")
@@ -42,6 +42,19 @@ def main(argv=None):
     args=parser.parse_args(argv)
 
     if args.run_gui:
+        from scripts.build_v22_dashboard import export_dashboard
+        from pathlib import Path
+        import webbrowser
+        file=Path("outputs/research_v22/dashboard.html").resolve()
+        if not file.is_file():
+            export_dashboard(file)
+        else:
+            # Opening an existing page still checks its underlying research inputs.
+            verify_v22()
+        print(f"Opening offline verified dashboard: {file}")
+        webbrowser.open(file.as_uri())
+        return 0
+    if args.run_qt_gui:
         from src.gui.v22_dashboard import main as launch
         return launch()
     if args.verify_v22:
