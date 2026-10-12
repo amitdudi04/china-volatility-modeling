@@ -9,6 +9,7 @@ from pathlib import Path
 import pandas as pd
 import numpy as np
 from scripts.run_archived_v22 import load_legacy_data
+from src.utils.archived_digest import archived_file_sha256
 
 MARKETS=("CSI_300","SSE_Composite","ChiNext")
 PREDICTION_MODELS=(
@@ -16,7 +17,7 @@ PREDICTION_MODELS=(
     "rolling_21_variance","ridge_rf_equal_variance","logvar_ridge_variance",
 )
 def digest(path:Path)->str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+    return archived_file_sha256(path)
 
 def load_research_market(market:str,root:Path|None=None)->dict:
     if market not in MARKETS:
