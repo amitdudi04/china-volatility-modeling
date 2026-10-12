@@ -31,7 +31,8 @@ def rerun_v22(root:Path):
 def main(argv=None):
     parser=argparse.ArgumentParser(description="Chinese equity variance research; verified v2.2 archived dataset")
     actions=parser.add_mutually_exclusive_group()
-    actions.add_argument("--run-gui",action="store_true",help="Open the verified offline browser research dashboard (no Qt dependency)")\n    actions.add_argument("--run-qt-gui",action="store_true",help="Try experimental v2.2 PyQt dashboard, dependent on local Qt graphics support")
+    actions.add_argument("--run-gui",action="store_true",help="Open the verified offline browser research dashboard (no Qt dependency)")
+    actions.add_argument("--run-qt-gui",action="store_true",help="Try experimental v2.2 PyQt dashboard, dependent on local Qt graphics support")
     actions.add_argument("--verify-v22",action="store_true",help="Validate 3 market files and checksum-verified research predictions")
     actions.add_argument("--run-pipeline",action="store_true",help="Rerun the corrected v2.2 retrospective experiment (new outputs only)")
     actions.add_argument("--run-legacy-gui",action="store_true",help="Open historical, superseded GUI for comparison only")
