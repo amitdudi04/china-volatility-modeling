@@ -65,5 +65,5 @@ def load_research_market(market:str,root:Path|None=None)->dict:
             "strategy":econ[econ.market==market].copy(),
             "bootstrap":ci[ci.market==market].copy(),
             "manifest":manifest,
-            "scope":"Historical 2024 prequential, NOT untouched holdout; exploratory post-hoc model correction.",
+            "scope":"Retrospective historical 2024 prequential, NOT untouched holdout; exploratory post-hoc model correction.",
             "instrument_note":"ChiNext uses 159915.SZ ETF proxy (raw close), NOT the ChiNext index." if market=="ChiNext" else "Price index; not directly tradeable."}
