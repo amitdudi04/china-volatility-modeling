@@ -10,7 +10,7 @@ import pandas as pd
 ROOT=Path(__file__).resolve().parents[1]
 RESEARCH=ROOT/"outputs"/"research_v22"
 README=(ROOT/"README.md").read_text(encoding="utf-8")
-REPORT=(ROOT/"docs"/"RESEARCH_V22_ARCHIVED_RESULTS.md").read_text(encoding="utf-8")
+REPORT=(ROOT/"docs"/"RESULTS.md").read_text(encoding="utf-8")
 MARKETS={
     "CSI_300":{"readme":"CSI 300","tail":"CSI 300","econ":"CSI 300"},
     "SSE_Composite":{"readme":"SSE Composite","tail":"SSE Composite","econ":"SSE"},
@@ -59,12 +59,13 @@ class PublishedClaimTests(unittest.TestCase):
                 for value in (managed.annualized_return,static.max_drawdown,managed.max_drawdown):
                     self.assertIn(f"{100*value:.2f}%",line)
 
-    def test_legacy_word_and_scope_are_explicitly_disclaimed(self):
+    def test_current_research_scope_is_explicit(self):
         self.assertFalse((ROOT/"docs"/"results_analysis.docx").exists())
-        self.assertTrue((ROOT/"docs"/"legacy_results_analysis_2026_SUPERSEDED.docx").exists())
+        self.assertFalse((ROOT/"docs"/"legacy_results_analysis_2026_SUPERSEDED.docx").exists())
         self.assertIn("not an untouched",README.lower())
         self.assertIn("**not** an untouched",REPORT.lower())
-        self.assertTrue((ROOT/"docs"/"FINAL_PANEL_REVIEW.md").exists())
+        self.assertTrue((ROOT/"docs"/"METHODOLOGY.md").exists())
+        self.assertTrue((ROOT/"docs"/"RESULTS.md").exists())
 
 if __name__=="__main__":
     unittest.main()
