@@ -2,6 +2,7 @@ name: Research v2 timing and target checks
 on:
   push:
     branches:
+      - main
       - "research/**"
   pull_request:
 
