@@ -18,7 +18,7 @@ The verification command checks raw-price source identities, complete per-market
 python main.py --run-pipeline
 ```
 
-This command reruns the archived retrospective model study into a **new** output directory and refuses overwriting the accepted research files. The per-origin GARCH and ML fits can be computationally expensive. Recomputed results should be checked against the saved metrics before claiming full empirical replication.
+This command reruns the archived forecasting models, model-loss comparisons and the initial Gaussian-risk/strategy sensitivity into a **new** output directory, without overwriting the accepted research files. It does **not** rerun the separate Student-t VaR/ES extension. That extension uses `scripts/run_student_t_v22.py` for per-origin chunks and `scripts/summarize_student_t_v22.py` for checked aggregation; both must be executed with their documented input/output arguments and non-overwriting directories. Re-estimation is computationally expensive. The saved V2.2 release can be checked without refitting, but full empirical reproduction requires rerunning these separate components and reconciling all results.
 
 ```bash
 python main.py --run-gui
