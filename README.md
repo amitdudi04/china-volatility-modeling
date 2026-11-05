@@ -110,7 +110,7 @@ python main.py --verify-v22
 python main.py --run-gui
 ```
 
-The dashboard reads the saved archived outputs offline. A full repeated model fit may be performed separately with `python main.py --run-pipeline`, which writes to a new output directory. Historical versions remain available through Git history rather than competing with the accepted research.
+The dashboard reads the saved outputs offline. `python main.py --run-pipeline` independently refits the forecast models and initial strategy/risk sensitivity into a new directory; the separate Student-t VaR/ES extension has its own reproducibility commands. Superseded generated outputs are recoverable from Git history. Some historical source modules remain in `src/` for traceability but do not generate the V2.2 research results.
 
 ## 8. Limitations
 
