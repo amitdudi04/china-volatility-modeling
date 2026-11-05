@@ -1,0 +1,100 @@
+{
+  "schema_version": "research-protocol-v2.2-legacy-archive",
+  "status": "RELEASED_ARCHIVED_RETROSPECTIVE_REANALYSIS_WITH_VERIFIED_VaR",
+  "amendment_date": "2026-10-12",
+  "amendment_reason": "User elects to complete the research on the original 2015–2024 archival dataset; recovery through Sep 2026 is out of scope. The previous v2.1 all-price-index proposal is not executable on archived files.",
+  "supersedes": "research-protocol-v2.1 proposed all-index 2015–2026 extension",
+  "original_main_commit": "c7d78bf4e59d3e1c08eedd429339398f82157f97",
+  "dataset_policy": "READ ORIGINAL REPO DATA/RAW CSVs ONLY. No downloads, extensions, imputation, backfill, or changes to original historical files.",
+  "annualization_sessions": 252,
+  "markets": {
+    "CSI_300": {
+      "ticker": "000300.SS",
+      "label": "CSI 300 PRICE INDEX",
+      "path": "data/raw/CSI_300.csv",
+      "first": "2021-03-11",
+      "last": "2024-12-30",
+      "rows": 925,
+      "git_blob_sha": "ded070ea74bc891063adaa08281f852d595e1e7c"
+    },
+    "SSE_Composite": {
+      "ticker": "000001.SS",
+      "label": "SSE COMPOSITE PRICE INDEX",
+      "path": "data/raw/SSE_Composite.csv",
+      "first": "2015-01-05",
+      "last": "2024-12-30",
+      "rows": 2428,
+      "git_blob_sha": "27b5734880b2bba2770122cb589c2be7bb428a60"
+    },
+    "ChiNext": {
+      "ticker": "159915.SZ",
+      "label": "CHI NEXT ETF PROXY — NOT CHINEXT PRICE INDEX",
+      "path": "data/raw/ChiNext.csv",
+      "first": "2015-01-05",
+      "last": "2024-12-30",
+      "rows": 2428,
+      "git_blob_sha": "72c1117c8c650144c90af70aac0f6f4da0b77a5e"
+    }
+  },
+  "windows": {
+    "initial_estimation_CSI_300": {
+      "start": "2021-03-11",
+      "end": "2022-12-30"
+    },
+    "initial_estimation_SSE_Composite_and_ChiNext": {
+      "start": "2015-01-05",
+      "end": "2022-12-30"
+    },
+    "retrospective_validation": {
+      "start": "2023-01-01",
+      "end": "2023-12-31",
+      "note": "Legacy project data/results already inspected: not untouched"
+    },
+    "retrospective_evaluation": {
+      "start": "2024-01-01",
+      "end": "2024-12-31",
+      "note": "Retrospective historical walk-forward OOS relative to each origin; NOT an untouched/blind holdout. Previously examined legacy 2024 results prohibit untouched claims."
+    }
+  },
+  "target": {
+    "one_session_annualized_variance": "252 * log(P[t+1]/P[t])**2",
+    "horizon_sessions": 1,
+    "forecast_origin": "after close at t, using information through t",
+    "target_maturity_rule": "Each training row has target_end_date <= forecast origin t"
+  },
+  "model_plan": [
+    "21-session trailing annualized squared-return baseline",
+    "Log-variance Ridge regression with lagged features and causal historical-range guardrail (NOT canonical HAR)",
+    "Random Forest regression on causal lagged features",
+    "50/50 Ridge/RF mix",
+    "Student-t GARCH(1,1) fitted using returns through origin t"
+  ],
+  "validation_plan": "Same-target, same-date annualized variance RMSE, MAE, QLIKE. No model winner claimed until full 2024 run and uncertainty testing.",
+  "reproducibility": "Full 2024 prequential forecasts written to outputs/research_v22 without rewriting legacy outputs. Check archived file dates/rows/individually computed SHA256.",
+  "limitations": [
+    "CSI source starts 2021, so training sample is shorter than SSE/ChiNext",
+    "ChiNext ETF is a proxy and raw close is not dividend-adjusted total return",
+    "Model tuning has already been influenced by previously examined legacy results, so this is retrospective evaluation, not untouched holdout",
+    "Daily squared returns are noisy conditional-variance proxies",
+    "Cross-market price-index vs ETF comparisons have different instrument characteristics"
+  ],
+  "post_hoc_amendment": {
+    "date": "2026-10-12",
+    "trigger": "Initial full 2024 CSI300 historical diagnostic showed one Ridge conditional variance forecast >873, far beyond the 21-day historical forecast; six-origin pilot had missed it.",
+    "changes": "Clip log-variance Ridge prediction into historical training bounds [min(trailing21/10, train target 1st percentile), max(5*trailing21, 3*train target 99th percentile)]. No future target values inform clipping at origin t.",
+    "classification": "retrospective exploratory model correction; all subsequent performance remains retrospective, NOT independent untouched OOS validation"
+  },
+  "data_ready": true,
+  "data_readiness_reason": "Exactly original archived 2015-2024 CSVs are frozen and all three 2024 retrospective runs with source hashes are verified; no post-2024 external data are included.",
+  "risk_addendum": {
+    "status": "2026-10-12 verified",
+    "model": "Fitted Student-t GARCH(1,1) mean, sigma, degrees of freedom at each 2024 forecast origin",
+    "n_per_market": 240,
+    "checks": [
+      "saved variance reconciles against per-origin refit",
+      "standardized Student-t left-tail VaR and parametric ES",
+      "Kupiec, Christoffersen independence and conditional coverage"
+    ],
+    "formal_ES_backtest": false
+  }
+}

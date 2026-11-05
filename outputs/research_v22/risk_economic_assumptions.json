@@ -1,0 +1,28 @@
+{
+  "scope": "exploratory archived 2024 prequential only",
+  "not_untouched_holdout": true,
+  "assumptions": [
+    "Normal conditional VaR at 95%, zero expected daily return; not Student-t VaR.",
+    "Kupiec unconditional coverage only; coverage nonrejection is not evidence of safe tail model.",
+    "No leverage: exposure min(1, 20% target annual vol / predicted vol).",
+    "Long-only and zero yield on idle cash; close-t reweight for next session t+1.",
+    "Transaction cost per unit one-way change in exposure: 0/5/10/20 bps.",
+    "No dividends, borrow costs, interest, taxes, market impact or ETF trading frictions.",
+    "SSE/CSI are non-investable price indices and ChiNext is raw-price ETF proxy.",
+    "Target and strategy settings are exploratory; not optimized on an untouched holdout."
+  ],
+  "sources": {
+    "CSI_300": {
+      "sha256": "670ef377989b95d9523f956c4c298907661cbdc60e6b15166042219ac0db2cb6",
+      "n_origins": 240
+    },
+    "SSE_Composite": {
+      "sha256": "68f22b656916bec428db779484065af97706bc09c3c7f148250a8ff3b8f7f59b",
+      "n_origins": 240
+    },
+    "ChiNext": {
+      "sha256": "42799ff7f8f85b9d3c80eecc7f7a56c667b2cdaf687ee68b98ffa4ca1b5e278f",
+      "n_origins": 240
+    }
+  }
+}

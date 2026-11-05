@@ -1,0 +1,13 @@
+market,model,reference,n,block_length,replications,mean_qlike_difference,ci95_low,ci95_high,ci_excludes_zero,interpretation
+CSI_300,garch11_variance,rolling_21_variance,240,5,2000,-0.11199882392558037,-0.2395315708685578,-0.004794470694426354,True,negative mean favours model; uncertainty conditional on selected retrospective methods
+CSI_300,random_forest_variance,rolling_21_variance,240,5,2000,-0.09137588353530053,-0.3166350134371562,0.0867490881216428,False,negative mean favours model; uncertainty conditional on selected retrospective methods
+CSI_300,ridge_rf_equal_variance,rolling_21_variance,240,5,2000,0.1160579992603744,-0.12395920858784566,0.40082963796872184,False,negative mean favours model; uncertainty conditional on selected retrospective methods
+CSI_300,logvar_ridge_variance,rolling_21_variance,240,5,2000,2.6206833780916647,0.760370963642062,5.611711098143976,True,negative mean favours model; uncertainty conditional on selected retrospective methods
+SSE_Composite,garch11_variance,rolling_21_variance,240,5,2000,-0.17382410753376135,-0.40413629337732493,-0.017048936038727914,True,negative mean favours model; uncertainty conditional on selected retrospective methods
+SSE_Composite,random_forest_variance,rolling_21_variance,240,5,2000,-0.10812677903151562,-0.3395530996814626,0.04564739805723914,False,negative mean favours model; uncertainty conditional on selected retrospective methods
+SSE_Composite,ridge_rf_equal_variance,rolling_21_variance,240,5,2000,0.13127682046745998,-0.05440363918555832,0.3624389010926143,False,negative mean favours model; uncertainty conditional on selected retrospective methods
+SSE_Composite,logvar_ridge_variance,rolling_21_variance,240,5,2000,7.8589067085586555,1.3193936794588226,19.375610575671317,True,negative mean favours model; uncertainty conditional on selected retrospective methods
+ChiNext,garch11_variance,rolling_21_variance,240,5,2000,-0.07590886736614806,-0.22837898324947184,0.03306716011059185,False,negative mean favours model; uncertainty conditional on selected retrospective methods
+ChiNext,random_forest_variance,rolling_21_variance,240,5,2000,-0.045449827778751235,-0.20865439175825926,0.09854709427959189,False,negative mean favours model; uncertainty conditional on selected retrospective methods
+ChiNext,ridge_rf_equal_variance,rolling_21_variance,240,5,2000,0.36443790136799564,-0.062188926367875846,1.007527729458539,False,negative mean favours model; uncertainty conditional on selected retrospective methods
+ChiNext,logvar_ridge_variance,rolling_21_variance,240,5,2000,11.298519625650908,1.0769779172631035,30.958712803143754,True,negative mean favours model; uncertainty conditional on selected retrospective methods
