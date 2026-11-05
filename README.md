@@ -90,7 +90,7 @@ The volatility-managed approach reduced the ChiNext drawdown, but its return was
 
 ## 7. Project files and reproducibility
 
-The current V2.2 research version is available on the default `main` branch. The principal documents and evidence are:
+The corrected V2.2 study is the authoritative research version on `main`; superseded studies are preserved only through Git history. The principal documents and evidence are:
 
 | Resource | Purpose |
 | --- | --- |
