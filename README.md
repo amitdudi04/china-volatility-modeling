@@ -88,32 +88,29 @@ A simple comparison uses GARCH forecasts to reduce or maintain equity exposure. 
 
 The volatility-managed approach reduced the ChiNext drawdown, but its return was substantially lower. It did not improve maximum drawdown for CSI 300 or SSE Composite during this period. These are illustrative calculations based on the stored price series, not a fully tradable total-return backtest.
 
-## 7. Project files and dashboard
+## 7. Project files and reproducibility
 
-The updated model scripts, test suite, results, and offline dashboard are currently available in the [updated project files](https://github.com/amitdudi04/china-volatility-modeling/tree/research/phase1-2-data-timing-2026-10-12).
+The current V2.2 research version is available on the default `main` branch. The principal documents and evidence are:
 
-| File or folder | What it contains |
+| Resource | Purpose |
 | --- | --- |
-| [Model scripts](https://github.com/amitdudi04/china-volatility-modeling/tree/research/phase1-2-data-timing-2026-10-12/src) | Feature preparation, volatility forecasts, and risk calculations |
-| [Results](https://github.com/amitdudi04/china-volatility-modeling/tree/research/phase1-2-data-timing-2026-10-12/outputs/research_v22) | Predictions, model comparisons, VaR/ES outputs, and strategy figures |
-| [Dashboard](https://github.com/amitdudi04/china-volatility-modeling/blob/research/phase1-2-data-timing-2026-10-12/outputs/research_v22/dashboard.html) | Offline view of forecast, risk, and strategy results |
-| [Detailed results](https://github.com/amitdudi04/china-volatility-modeling/blob/research/phase1-2-data-timing-2026-10-12/docs/RESEARCH_V22_ARCHIVED_RESULTS.md) | Methods, numerical tables, and additional analysis |
-| [Tests](https://github.com/amitdudi04/china-volatility-modeling/tree/research/phase1-2-data-timing-2026-10-12/tests) | Checks for data alignment, forecast calculations, risk metrics, and saved outputs |
-
-To run the updated version locally:
+| [Methodology](docs/METHODOLOGY.md) | Instruments, targets, causal forecasting, estimation, uncertainty and risk conventions |
+| [Research results](docs/RESULTS.md) | Full reconciled variance-loss, VaR, ES and strategy tables |
+| [Limitations](docs/LIMITATIONS.md) | Retrospective selection, source-data and tradeability constraints |
+| [Reproducibility](docs/REPRODUCIBILITY.md) | Environment, validation, archived data and independent reruns |
+| [Saved empirical evidence](outputs/research_v22/) | 720 predictions, bootstrap, risk tests, strategy sensitivities and offline dashboard |
+| [Tests](tests/) | Forecast timing, model accounting and numerical-publication checks |
 
 ```bash
 git clone https://github.com/amitdudi04/china-volatility-modeling.git
 cd china-volatility-modeling
-git switch research/phase1-2-data-timing-2026-10-12
-
-python -m pip install "numpy>=1.24,<3" "pandas>=2,<3" "scikit-learn>=1.4,<2" "arch>=7,<9"
+python -m pip install -r requirements.txt
 python -m unittest discover -s tests -v
 python main.py --verify-v22
 python main.py --run-gui
 ```
 
-The dashboard works offline using saved output files. **The default `main` branch still contains the earlier pipeline**; switch to the branch above to run the updated models and view their corresponding results.
+The dashboard reads the saved archived outputs offline. A full repeated model fit may be performed separately with `python main.py --run-pipeline`, which writes to a new output directory. Historical versions remain available through Git history rather than competing with the accepted research.
 
 ## 8. Limitations
 
