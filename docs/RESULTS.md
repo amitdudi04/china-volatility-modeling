@@ -2,9 +2,9 @@
 
 **Status:** Fully computed, internally reconciled, retrospectively evaluated; **not** an untouched holdout or a validated investable strategy.
 
-## Why the data scope changed
+## Research sample and data scope
 
-The original project was developed on historical market CSVs ending 2024-12-30. Source recovery through September 2026 proved infeasible from Yahoo Finance and EastMoney on both GitHub Actions and the connected desktop. At the user's direction, the study was returned to the **original archived data** instead of manufacturing missing history. This is recorded in `config/research_protocol_v22.json`. The earlier proposed v2.1 three-index/2026 expansion is superseded, not secretly treated as completed.
+The analysis uses the archived historical price series ending on 30 December 2024. Because a consistent, verified extension was not available for all three instruments, the empirical sample was not extended to 2025–2026. No observations from the proposed later period are included. Dataset definitions and source identities are retained in `config/research_protocol_v22.json`.
 
 | Market | Actual instrument | Original data | Rows | Forecast origins |
 | --- | --- | --- | ---: | ---: |
@@ -12,7 +12,7 @@ The original project was developed on historical market CSVs ending 2024-12-30. 
 | SSE Composite | `000001.SS` **price index** | 2015-01-05 to 2024-12-30 | 2,428 | 240 |
 | ChiNext | `159915.SZ` **ETF proxy, not the ChiNext index** | 2015-01-05 to 2024-12-30 | 2,428 | 240 |
 
-**Frozen final forecast origins:** 2024-01-02 through 2024-12-27, covering 240 observations per market. The next-session price on 2024-12-30 completes the final label. CSI 300 has shorter pre-2024 training history, a cross-market limitation. Raw `Close` is used exactly as archived; the ETF series excludes a verified dividend-adjusted total-return convention. Published legacy result CSVs remain unchanged.
+**Frozen final forecast origins:** 2024-01-02 through 2024-12-27, covering 240 observations per market. The next-session price on 2024-12-30 completes the final label. CSI 300 has shorter pre-2024 training history, a cross-market limitation. Raw `Close` is used exactly as archived; the ETF series excludes a verified dividend-adjusted total-return convention. The superseded pipeline's output files are retained in repository history rather than the current research release.
 
 ## Experiment and causal timing
 
@@ -80,7 +80,7 @@ These values concern **Gaussian** next-session VaR with zero conditional mean an
 
 The Kupiec test is provided per model in `normal_95pct_var_coverage.csv`. A nonrejected Kupiec test is **not proof** of safe or calibrated tails, particularly without independence tests. The Ridge forecasts systematically understate some risk outcomes; the prior claim that Gaussian VaR universally fails on every market is contradicted by this preliminary evaluation.
 
-## Per-origin fitted Student-t VaR and parametric Expected Shortfall (new)
+## Per-origin Student-t VaR and parametric Expected Shortfall
 
 The saved Student-t GARCH study refits **GARCH(1,1) with Student-t conditional innovations at each of the 240 2024 forecast origins per market**, recovers that origin's conditional mean, conditional volatility and fitted degrees of freedom, and verifies its variance against the original saved annualized GARCH forecast. The Student-t conditional quantile is rescaled to **unit innovation variance** using `sqrt((nu - 2)/nu)`; no fixed arbitrary degrees-of-freedom assumption is used. The lower-tail parametric conditional Expected Shortfall is computed analytically. Its performance is **not formally backtested**.
 
@@ -119,8 +119,16 @@ python scripts/assess_archived_v22_risk.py --source-dir staging/research_v22 --o
 
 These scripts **refuse to overwrite existing releases**. On a rerun use new staging directory names, then compare hashes before publishing. The saved final archival release under `outputs/research_v22/` has **3 × 240 per-origin forecast rows**, manifests, full loss tables, bootstrap confidence intervals, Gaussian VaR diagnostics, and exposure-cost sensitivities. ChiNext's complete 240-row forecast was independently reproduced by four 60-row batches with **zero numerical difference**.
 
-**Remaining limitations:** no new post-2024 holdout, no canonical HAR-RV implementation, no **formal ES backtest** (Student-t VaR and Christoffersen diagnostics are now available), no transaction-level or dividend-adjusted investable backtest, and the old GUI/reports remain explicitly archived while the verified offline browser dashboard is the current presentation interface. The 2024 period was examined during model correction; interpret all rankings as exploratory retrospective evidence. No admissions score should be inflated solely by adding these files.
+**Remaining limitations:** no independent post-2024 holdout, no canonical HAR-RV implementation, no formal ES backtest, and no transaction-level or dividend-adjusted investable backtest. The observed 2024 results influenced model correction. Accordingly, all model rankings should be interpreted as retrospective and exploratory. See [Limitations](LIMITATIONS.md) for further qualifications.
 
 ## Independent arithmetic reconciliation
 
 The retained 720 forecast rows were independently checked against original close-price data for next-session target dates and annualized squared log-return values. All 15 published model-level RMSE, MAE and QLIKE rows were recalculated from the saved predictions and matched to floating-point precision. The Student-t VaR breach counts, hit-transition matrices and conditional-variance scaling also reconciled to the saved risk forecasts. These checks verify internal arithmetic and row alignment; they do not independently refit each model or establish an untouched evaluation sample.
+
+## Cross-market reconciliation
+
+A [machine-readable comparative summary](../outputs/research_v22/cross_market_reconciled_summary.csv) brings together selected forecast and economic metrics using the already published source tables. Relative to the 21-session rolling-variance baseline, GARCH reduces variance RMSE by **6.92% (CSI 300), 5.56% (SSE Composite) and 5.22% (ChiNext ETF)**. These are within-sample retrospective model-comparison differences, not prospective error-reduction guarantees.
+
+At 10 basis points per unit of modeled target-exposure turnover, GARCH volatility-managed annual returns are **17.44%, 11.77% and 5.12%**, compared with static annual returns of **19.08%, 15.83% and 20.97%**. ChiNext's managed strategy improves the historical maximum drawdown from **−25.50% to −17.54%**, but with a substantial return trade-off. A forecasting-loss advantage does not establish superior investment utility.
+
+The comparative summary is a derived presentation of existing validated figures; it does not introduce an independently tested model or new observations.
